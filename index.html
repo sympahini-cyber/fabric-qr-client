@@ -388,6 +388,7 @@ let _raf = null;
 let _scanning = false;
 let _lastCode = '';
 let _lastCodeTime = 0;
+let _detector = null;  // BarcodeDetector if available
 
 /* ── UTILS ── */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -599,6 +600,35 @@ function goBackToCart() {
 }
 
 /* ── SCANNER ── */
+
+/* ビープ音 */
+function beep() {
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.type = 'sine';
+    o.frequency.value = 1800;
+    g.gain.setValueAtTime(0.25, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
+    o.start(ac.currentTime);
+    o.stop(ac.currentTime + 0.12);
+  } catch(e) {}
+}
+
+/* BarcodeDetector 初期化（利用可能な場合） */
+async function initDetector() {
+  if(typeof BarcodeDetector !== 'undefined') {
+    try {
+      const formats = await BarcodeDetector.getSupportedFormats();
+      if(formats.includes('qr_code')) {
+        _detector = new BarcodeDetector({ formats: ['qr_code'] });
+      }
+    } catch(e) {}
+  }
+}
+
 async function openScanner() {
   if(_scanning) return;
   _scanning = true;
@@ -609,6 +639,9 @@ async function openScanner() {
   document.getElementById('scan-status').textContent = 'カメラを起動しています...';
   _lastCode = '';
   _lastCodeTime = 0;
+
+  // Detector 初期化（まだなら）
+  if(!_detector) await initDetector();
 
   // Fully reset video
   const video = document.getElementById('scan-video');
@@ -639,57 +672,82 @@ async function openScanner() {
   }
 
   video.srcObject = _stream;
-  // iOS Safari needs explicit play()
-  try { await video.play(); } catch(e) {/* ok */}
+  try { await video.play(); } catch(e) {}
 
-  // Wait for video to stabilize (important on mobile)
+  // Wait for video to stabilize
   await new Promise(r => {
     const check = () => { if(video.videoWidth > 0 || video.readyState >= 2) r(); else setTimeout(check, 80); };
     check();
-    setTimeout(r, 2500); // max wait
+    setTimeout(r, 2500);
   });
 
-  document.getElementById('scan-status').textContent = 'スキャン中...';
-  _raf = requestAnimationFrame(scanTick);
+  const engine = _detector ? 'BarcodeDetector' : 'jsQR';
+  document.getElementById('scan-status').textContent = 'スキャン中... (' + engine + ')';
+  scanTick();
 }
 
-function scanTick() {
-  const video  = document.getElementById('scan-video');
-  const canvas = document.getElementById('scan-canvas');
-  if(!video || !canvas || !_stream) return;
+async function scanTick() {
+  if(!_scanning || !_stream) return;
 
-  if(video.videoWidth > 0 && video.videoHeight > 0) {
-    const w = video.videoWidth, h = video.videoHeight;
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, w, h);
-    const imgData = ctx.getImageData(0, 0, w, h);
-    const code = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
-    if(code && code.data) {
-       const now = Date.now();
-      // Debounce: same code within 3s ignored
-      if(code.data !== _lastCode || now - _lastCodeTime > 3000) {
-        _lastCode = code.data;
-        _lastCodeTime = now;
-        addToCart(code.data);
-        setTimeout(() => {
-          if(document.getElementById('screen-scanner').classList.contains('open')) {
-            document.getElementById('scan-status').textContent = 'スキャン中...';
-          }
-        }, 2000);
+  const video = document.getElementById('scan-video');
+  if(!video || video.videoWidth === 0) {
+    if(_scanning) _raf = requestAnimationFrame(scanTick);
+    return;
+  }
+
+  let codeData = null;
+
+  try {
+    if(_detector) {
+      /* ── BarcodeDetector（Android Chrome・高速） ── */
+      const results = await _detector.detect(video);
+      if(results.length > 0) codeData = results[0].rawValue;
+    } else {
+      /* ── jsQR フォールバック（iOS Safari など） ── */
+      const canvas = document.getElementById('scan-canvas');
+      const w = video.videoWidth, h = video.videoHeight;
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, w, h);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const result = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
+      if(result) codeData = result.data;
+    }
+  } catch(e) {}
+
+  if(codeData) {
+    const now = Date.now();
+    if(codeData !== _lastCode || now - _lastCodeTime > 3000) {
+      _lastCode = codeData;
+      _lastCodeTime = now;
+      const added = addToCart(codeData);
+      if(added) {
+        beep();
+        if(navigator.vibrate) navigator.vibrate([60, 40, 60]);
       }
+      setTimeout(() => {
+        if(_scanning) document.getElementById('scan-status').textContent = 'スキャン中...';
+      }, 1800);
     }
   }
-  _raf = requestAnimationFrame(scanTick);
+
+  if(_scanning) {
+    if(_detector) {
+      /* BarcodeDetector は async なので setTimeout でポーリング */
+      setTimeout(scanTick, 120);
+    } else {
+      _raf = requestAnimationFrame(scanTick);
+    }
+  }
 }
 
 function closeScanner() {
+  _scanning = false;
   if(_raf) { cancelAnimationFrame(_raf); _raf=null; }
   if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream=null; }
   const video = document.getElementById('scan-video');
   video.srcObject = null;
   document.getElementById('screen-scanner').classList.remove('open');
-  _scanning = false;
 
   if(_cart.length > 0) renderCart();
   else showScreen('nodata');
