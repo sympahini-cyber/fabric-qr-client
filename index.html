@@ -230,7 +230,7 @@ textarea.inp{resize:vertical;min-height:80px}
 <body>
 <script>
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
-</script>
+<\/script>
 
 <header class="hdr">
   <div class="hdr-brand">
@@ -240,7 +240,7 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
         <line x1="6" y1="2" x2="6" y2="10" stroke="#B0ACA8" stroke-width=".8"/>
         <line x1="3" y1="3" x2="9" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
         <line x1="9" y1="3" x2="3" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
-      </svg>
+     </svg>
     </div>
     <div>
       <div class="hdr-name">Pick&nbsp;List</div>
@@ -280,8 +280,12 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
 
     <div id="cart-items"></div>
 
-    <div style="margin-bottom:28px;display:flex;flex-direction:column;gap:8px">
-      <button class="btn-secondary" onclick="openScanner()">+ 続けてスキャン</button>
+    <div style="margin-bottom:28px;display:flex;align-items:center;gap:14px;padding:14px 0">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <div style="font-size:9px;font-weight:300;letter-spacing:.18em;color:var(--ink-3);text-align:center;line-height:2">
+        スマホのカメラアプリでQRコードを読み取ると<br>続けてリストに追加できます
+      </div>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
     </div>
 
     <div class="banner-warn" id="no-endpoint-warn" style="display:none">
@@ -377,7 +381,7 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
   <div class="scan-added-flash" id="scan-flash"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"><\/script>
 <script>
 'use strict';
 
@@ -395,7 +399,7 @@ let _qrScannerLib = null;  // cached QrScanner class
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 function saveCart() {
-  try { localStorage.setItem('_fc_cart', JSON.stringify(_cart)); } catch(e) {}
+  try { localStorage.setItem('_fc_cart', JSON.stringify(_cart); } catch(e) {}
 }
 
 function showScreen(name) {
@@ -586,7 +590,7 @@ async function submitForm() {
 
 function startNewSession() {
   _cart = [];
-  saveCart();
+   saveCart();
   updateCartBadge();
   // Clear form
   ['r-name','r-company','r-tel','r-email','r-memo'].forEach(id=>{
@@ -637,8 +641,7 @@ function _onQRDecode(codeData) {
   if(codeData !== _lastCode || now - _lastCodeTime > 3000) {
     _lastCode = codeData;
     _lastCodeTime = now;
-    const added = addToCart(codeData);
-    if(added) {
+    const added = addToCart(codeData);    if(added) {
       beep();
       if(navigator.vibrate) navigator.vibrate([60, 40, 60]);
     }
@@ -703,7 +706,7 @@ async function _openScannerJsQR() {
   const constraintList = [
     {video:{facingMode:{exact:'environment'},width:{ideal:1920},height:{ideal:1080}}},
     {video:{facingMode:'environment',width:{ideal:1280}}},
-    {video:{facingMode:'environment'}},
+    {video:  {facingMode:'environment'}},
     {video:{width:{ideal:1280}}},
     {video:true}
   ];
@@ -723,7 +726,7 @@ async function _openScannerJsQR() {
   try { await video.play(); } catch(e) {}
 
   await new Promise(r => {
-    const check = () => { if(video.videoWidth > 0 || video.readyState >= 2) r(); else setTimeout(check, 80); };
+    const check = () => { if(video.videoWidth > 0 || video.readyState >=  2) r(); else setTimeout(check, 80); };
     check();
     setTimeout(r, 2500);
   });
@@ -767,6 +770,6 @@ function closeScanner() {
 }
 
 init();
-</script>
-</body>
-</html>
+<\/script>
+<\/body>
+<\/html>
