@@ -388,7 +388,8 @@ let _raf = null;
 let _scanning = false;
 let _lastCode = '';
 let _lastCodeTime = 0;
-let _detector = null;  // BarcodeDetector if available
+let _qrScanner = null;     // QrScanner instance (nimiq)
+let _qrScannerLib = null;  // cached QrScanner class
 
 /* ── UTILS ── */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -617,15 +618,33 @@ function beep() {
   } catch(e) {}
 }
 
-/* BarcodeDetector 初期化（利用可能な場合） */
-async function initDetector() {
-  if(typeof BarcodeDetector !== 'undefined') {
-    try {
-      const formats = await BarcodeDetector.getSupportedFormats();
-      if(formats.includes('qr_code')) {
-        _detector = new BarcodeDetector({ formats: ['qr_code'] });
-      }
-    } catch(e) {}
+/* ── QR SCANNER ENGINE ── */
+
+async function loadQrScanner() {
+  if(_qrScannerLib) return _qrScannerLib;
+  try {
+    const mod = await import('https://unpkg.com/qr-scanner@1.4.2/qr-scanner.min.js');
+    _qrScannerLib = mod.default;
+    return _qrScannerLib;
+  } catch(e) {
+    return null;
+  }
+}
+
+function _onQRDecode(codeData) {
+  if(!_scanning || !codeData) return;
+  const now = Date.now();
+  if(codeData !== _lastCode || now - _lastCodeTime > 3000) {
+    _lastCode = codeData;
+    _lastCodeTime = now;
+    const added = addToCart(codeData);
+    if(added) {
+      beep();
+      if(navigator.vibrate) navigator.vibrate([60, 40, 60]);
+    }
+    setTimeout(() => {
+      if(_scanning) document.getElementById('scan-status').textContent = 'スキャン中...';
+    }, 1800);
   }
 }
 
@@ -636,20 +655,51 @@ async function openScanner() {
   const overlay = document.getElementById('screen-scanner');
   overlay.classList.add('open');
   updateCartBadge();
-  document.getElementById('scan-status').textContent = 'カメラを起動しています...';
+  const statusEl = document.getElementById('scan-status');
+  statusEl.textContent = 'カメラを起動しています...';
   _lastCode = '';
   _lastCodeTime = 0;
 
-  // Detector 初期化（まだなら）
-  if(!_detector) await initDetector();
+  // Try qr-scanner (WASM ZXing on iOS, BarcodeDetector on Android)
+  const QrScanner = await loadQrScanner();
 
-  // Fully reset video
+  if(QrScanner) {
+    try {
+      if(_qrScanner) { try { _qrScanner.destroy(); } catch(e){} _qrScanner = null; }
+
+      const video = document.getElementById('scan-video');
+      _qrScanner = new QrScanner(
+        video,
+        result => _onQRDecode(typeof result === 'object' ? result.data : result),
+        {
+          preferredCamera: 'environment',
+          highlightScanRegion: false,
+          highlightCodeOutline: false,
+          returnDetailedScanResult: true,
+          maxScansPerSecond: 8,
+        }
+      );
+
+      await _qrScanner.start();
+      statusEl.textContent = 'スキャン中...';
+      return;
+
+    } catch(e) {
+      if(_qrScanner) { try { _qrScanner.destroy(); } catch(ex){} _qrScanner = null; }
+      // Fall through to jsQR
+    }
+  }
+
+  // Fallback: manual getUserMedia + jsQR
+  await _openScannerJsQR();
+}
+
+async function _openScannerJsQR() {
   const video = document.getElementById('scan-video');
   if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream=null; }
   if(_raf) { cancelAnimationFrame(_raf); _raf=null; }
   video.srcObject = null;
 
-  // Try constraints in order (mobile-first)
   const constraintList = [
     {video:{facingMode:{exact:'environment'},width:{ideal:1920},height:{ideal:1080}}},
     {video:{facingMode:'environment',width:{ideal:1280}}},
@@ -660,10 +710,8 @@ async function openScanner() {
 
   let gotStream = false;
   for(const c of constraintList) {
-    try {
-      _stream = await navigator.mediaDevices.getUserMedia(c);
-      gotStream = true; break;
-    } catch(e) { /* try next */ }
+    try { _stream = await navigator.mediaDevices.getUserMedia(c); gotStream = true; break; }
+    catch(e) {}
   }
 
   if(!gotStream) {
@@ -674,83 +722,48 @@ async function openScanner() {
   video.srcObject = _stream;
   try { await video.play(); } catch(e) {}
 
-  // Wait for video to stabilize
   await new Promise(r => {
     const check = () => { if(video.videoWidth > 0 || video.readyState >= 2) r(); else setTimeout(check, 80); };
     check();
     setTimeout(r, 2500);
   });
 
-  const engine = _detector ? 'BarcodeDetector' : 'jsQR';
-  document.getElementById('scan-status').textContent = 'スキャン中... (' + engine + ')';
-  scanTick();
+  document.getElementById('scan-status').textContent = 'スキャン中... (jsQR)';
+  _scanTickJsQR();
 }
 
-async function scanTick() {
+function _scanTickJsQR() {
   if(!_scanning || !_stream) return;
-
   const video = document.getElementById('scan-video');
-  if(!video || video.videoWidth === 0) {
-    if(_scanning) _raf = requestAnimationFrame(scanTick);
-    return;
-  }
-
-  let codeData = null;
+  if(!video || video.videoWidth === 0) { if(_scanning) _raf = requestAnimationFrame(_scanTickJsQR); return; }
 
   try {
-    if(_detector) {
-      /* ── BarcodeDetector（Android Chrome・高速） ── */
-      const results = await _detector.detect(video);
-      if(results.length > 0) codeData = results[0].rawValue;
-    } else {
-      /* ── jsQR フォールバック（iOS Safari など） ── */
-      const canvas = document.getElementById('scan-canvas');
-      const w = video.videoWidth, h = video.videoHeight;
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, w, h);
-      const imgData = ctx.getImageData(0, 0, w, h);
-      const result = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
-      if(result) codeData = result.data;
-    }
+    const canvas = document.getElementById('scan-canvas');
+    const w = video.videoWidth, h = video.videoHeight;
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, w, h);
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const result = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
+    if(result) _onQRDecode(result.data);
   } catch(e) {}
 
-  if(codeData) {
-    const now = Date.now();
-    if(codeData !== _lastCode || now - _lastCodeTime > 3000) {
-      _lastCode = codeData;
-      _lastCodeTime = now;
-      const added = addToCart(codeData);
-      if(added) {
-        beep();
-        if(navigator.vibrate) navigator.vibrate([60, 40, 60]);
-      }
-      setTimeout(() => {
-        if(_scanning) document.getElementById('scan-status').textContent = 'スキャン中...';
-      }, 1800);
-    }
-  }
-
-  if(_scanning) {
-    if(_detector) {
-      /* BarcodeDetector は async なので setTimeout でポーリング */
-      setTimeout(scanTick, 120);
-    } else {
-      _raf = requestAnimationFrame(scanTick);
-    }
-  }
+  if(_scanning) _raf = requestAnimationFrame(_scanTickJsQR);
 }
 
 function closeScanner() {
   _scanning = false;
-  if(_raf) { cancelAnimationFrame(_raf); _raf=null; }
-  if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream=null; }
-  const video = document.getElementById('scan-video');
-  video.srcObject = null;
-  document.getElementById('screen-scanner').classList.remove('open');
-
+  if(_raf) { cancelAnimationFrame(_raf); _raf = null; }
+  if(_qrScanner) {
+    try { _qrScanner.stop(); _qrScanner.destroy(); } catch(e) {}
+    _qrScanner = null;
+  }
+  if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream = null; }
+  const video = document.getElementById("scan-video");
+  if(video) video.srcObject = null;
+  document.getElementById("screen-scanner").classList.remove("open");
   if(_cart.length > 0) renderCart();
-  else showScreen('nodata');
+  else showScreen("nodata");
 }
 
 init();
