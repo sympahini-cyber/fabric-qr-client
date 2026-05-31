@@ -5,24 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pick List</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Serif+JP:wght@200;300;400&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0C0A08; --bg-elev:#161210; --bg-card:#1E1B18;
-  --ink-0:#F0EAE0; --ink-1:#C8C0B4; --ink-2:#8A8278; --ink-3:#524E4A; --ink-4:#302D2A;
-  --gold:#C4A265; --gold-dim:#8B7148; --gold-lo:rgba(196,162,101,.08); --gold-mid:rgba(196,162,101,.22);
-  --border:rgba(196,162,101,.14); --border-hi:rgba(196,162,101,.32);
-  --sage:#6B9B70; --ruby:#C45A4E;
+  /* SOKI Atami — 石・木・温泉 */
+  --bg:#070608; --bg-elev:#100E12; --bg-card:#181620;
+  --ink-0:#EDE6D8; --ink-1:#C4BAA4; --ink-2:#847A6C; --ink-3:#4A4640; --ink-4:#28252A;
+  --silver:#C0BCBA; --silver-dim:#6A6462; --silver-lo:rgba(192,188,186,.08); --silver-mid:rgba(192,188,186,.20);
+  --border:rgba(192,188,186,.13); --border-hi:rgba(192,188,186,.28);
+  --sage:#4E7A5C; --ruby:#A84840;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-html,body{min-height:100%;background:var(--bg);color:var(--ink-0);font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.8;-webkit-font-smoothing:antialiased;}
+html,body{min-height:100%;background:var(--bg);color:var(--ink-0);font-family:'Yu Gothic','游ゴシック','YuGothic','Noto Sans JP','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.8;-webkit-font-smoothing:antialiased;}
 body{padding-bottom:80px}
 
 /* ── HEADER ── */
 .hdr{
   position:sticky;top:0;z-index:10;
-  background:rgba(12,10,8,.94);
+  background:rgba(7,6,8,.95);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
   padding:18px 24px;
@@ -31,31 +32,31 @@ body{padding-bottom:80px}
 .hdr-brand{display:flex;align-items:center;gap:14px}
 .logo-mark{
   width:32px;height:32px;
-  border:1px solid var(--gold-dim);
+  border:1px solid var(--silver-dim);
   display:flex;align-items:center;justify-content:center;
   position:relative;flex-shrink:0;
 }
-.logo-mark::before{content:'';position:absolute;inset:3px;border:1px solid rgba(196,162,101,.18);}
+.logo-mark::before{content:'';position:absolute;inset:3px;border:1px solid rgba(192,188,186,.18);}
 .hdr-name{
   font-family:'Cormorant Garamond',Georgia,serif;
   font-size:15px;font-weight:300;letter-spacing:.5em;
   color:var(--ink-0);text-transform:uppercase;line-height:1;
 }
-.hdr-sub{font-size:8px;font-weight:300;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;margin-top:4px;}
+.hdr-sub{font-size:8px;font-weight:300;letter-spacing:.3em;color:var(--silver-dim);text-transform:uppercase;margin-top:4px;}
 .cart-badge{
   display:flex;align-items:center;gap:10px;
   font-size:9px;font-weight:300;letter-spacing:.2em;color:var(--ink-3);
 }
 .cart-count{
   min-width:24px;height:24px;
-  background:var(--gold);color:var(--bg);
+  background:var(--silver);color:var(--bg);
   border-radius:0;
   font-size:11px;font-weight:400;
   display:flex;align-items:center;justify-content:center;
   padding:0 6px;
   transition:all .2s;
 }
-.cart-count.has-items{background:var(--gold)}
+.cart-count.has-items{background:var(--silver)}
 .cart-count.empty{background:var(--ink-4);color:var(--ink-2)}
 
 /* ── LAYOUT ── */
@@ -64,17 +65,17 @@ body{padding-bottom:80px}
 /* ── DIVIDERS ── */
 .sec{display:flex;align-items:center;gap:14px;margin:0 0 22px;}
 .sec-line{flex:1;height:1px;background:var(--border)}
-.sec-lbl{font-size:8px;font-weight:300;letter-spacing:.28em;color:var(--gold-dim);text-transform:uppercase;white-space:nowrap;}
+.sec-lbl{font-size:8px;font-weight:300;letter-spacing:.28em;color:var(--silver-dim);text-transform:uppercase;white-space:nowrap;}
 
 /* ── CART ITEMS ── */
 .cart-item{
   background:var(--bg-card);border:1px solid var(--border);
   margin-bottom:10px;position:relative;overflow:hidden;
 }
-.cart-item-accent{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.6;}
+.cart-item-accent{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--silver),transparent);opacity:.6;}
 .cart-item-body{padding:16px 20px 14px;}
 .cart-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
-.cart-hinban{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:300;font-style:italic;color:var(--gold);letter-spacing:.04em;line-height:1.2;}
+.cart-hinban{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:300;font-style:italic;color:var(--silver);letter-spacing:.04em;line-height:1.2;}
 .cart-hinmei{font-size:10px;font-weight:300;letter-spacing:.15em;color:var(--ink-2);text-transform:uppercase;margin-top:2px;}
 .cart-remove{
   background:transparent;border:1px solid var(--ink-4);color:var(--ink-3);
@@ -86,47 +87,47 @@ body{padding-bottom:80px}
 .cart-specs{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--border);}
 .cart-spec{padding:8px 12px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
 .cart-spec:nth-child(even){border-right:none}
-.cart-spec-lbl{font-size:7.5px;font-weight:400;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:3px;}
+.cart-spec-lbl{font-size:7.5px;font-weight:400;letter-spacing:.2em;color:var(--silver-dim);text-transform:uppercase;margin-bottom:3px;}
 .cart-spec-val{font-size:12px;font-weight:300;color:var(--ink-1);}
 .cart-qty-row{display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);}
-.cart-qty-lbl{font-size:8px;font-weight:300;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;flex:1;}
+.cart-qty-lbl{font-size:8px;font-weight:300;letter-spacing:.2em;color:var(--silver-dim);text-transform:uppercase;flex:1;}
 .cart-qty-input{
   width:64px;background:var(--bg-elev);
-  border:1px solid var(--border);border-top-color:var(--gold-mid);
+  border:1px solid var(--border);border-top-color:var(--silver-mid);
   color:var(--ink-0);font-size:14px;font-weight:300;
   font-family:inherit;padding:6px 10px;
   outline:none;text-align:center;border-radius:0;
   -webkit-appearance:none;appearance:none;
 }
-.cart-qty-input:focus{border-color:var(--gold-dim)}
+.cart-qty-input:focus{border-color:var(--silver-dim)}
 .cart-qty-unit{font-size:11px;font-weight:300;color:var(--ink-2);letter-spacing:.1em;}
 
 /* ── INPUTS ── */
 .inp-row{margin-bottom:18px}
-.inp-lbl{display:block;font-size:8px;font-weight:300;letter-spacing:.25em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px;}
+.inp-lbl{display:block;font-size:8px;font-weight:300;letter-spacing:.25em;color:var(--silver-dim);text-transform:uppercase;margin-bottom:8px;}
 .inp-lbl .req{color:var(--ruby);margin-left:4px}
 .inp{
   width:100%;background:var(--bg-elev);
-  border:1px solid var(--border);border-top-color:var(--gold-mid);
+  border:1px solid var(--border);border-top-color:var(--silver-mid);
   color:var(--ink-0);font-size:15px;font-weight:300;font-family:inherit;
   padding:12px 16px;outline:none;
   transition:border-color .2s,box-shadow .2s;
   -webkit-appearance:none;appearance:none;border-radius:0;
 }
-.inp:focus{border-color:var(--gold-dim);box-shadow:0 0 0 1px var(--gold-lo)}
+.inp:focus{border-color:var(--silver-dim);box-shadow:0 0 0 1px var(--silver-lo)}
 .inp::placeholder{color:var(--ink-3)}
 textarea.inp{resize:vertical;min-height:80px}
 
 /* ── BUTTONS ── */
 .btn-primary{
   display:block;width:100%;padding:16px;
-  background:var(--gold);color:var(--bg);
+  background:var(--silver);color:var(--bg);
   font-size:10px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;
   border:none;border-radius:0;cursor:pointer;font-family:inherit;
   transition:all .2s;margin-top:8px;position:relative;overflow:hidden;
 }
 .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 50%);pointer-events:none;}
-.btn-primary:hover{background:#D4B275;letter-spacing:.38em}
+.btn-primary:hover{background:#D4D0CE;letter-spacing:.38em}
 .btn-primary:active{transform:translateY(1px);opacity:.9}
 .btn-primary:disabled{opacity:.3;cursor:not-allowed;transform:none;letter-spacing:.35em}
 .btn-secondary{
@@ -136,7 +137,7 @@ textarea.inp{resize:vertical;min-height:80px}
   border:1px solid var(--border-hi);border-radius:0;
   cursor:pointer;font-family:inherit;transition:all .2s;
 }
-.btn-secondary:hover{border-color:var(--gold-dim);color:var(--gold);background:var(--gold-lo)}
+.btn-secondary:hover{border-color:var(--silver-dim);color:var(--silver);background:var(--silver-lo)}
 .btn-ghost{
   display:block;width:100%;padding:12px;
   background:transparent;color:var(--ink-3);
@@ -160,7 +161,7 @@ textarea.inp{resize:vertical;min-height:80px}
 .state-ic{font-size:17px;line-height:1}
 .state-ttl{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:300;font-style:italic;letter-spacing:.06em;color:var(--ink-0);margin-bottom:12px;line-height:1.3;}
 .state-sub{font-size:12px;font-weight:300;color:var(--ink-2);line-height:2;}
-.spinner{width:30px;height:30px;border:1px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 26px;}
+.spinner{width:30px;height:30px;border:1px solid var(--border);border-top-color:var(--silver);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 26px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── WARN BANNER ── */
@@ -179,7 +180,7 @@ textarea.inp{resize:vertical;min-height:80px}
 .scan-title{color:rgba(255,255,255,.7);font-size:10px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;}
 .scan-close{
   color:var(--ink-0);background:rgba(0,0,0,.5);
-  border:1px solid rgba(196,162,101,.3);
+  border:1px solid rgba(192,188,186,.3);
   width:40px;height:40px;font-size:15px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
@@ -188,11 +189,11 @@ textarea.inp{resize:vertical;min-height:80px}
 .scan-frame{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;}
 .scan-box{width:220px;height:220px;position:relative;}
 .scan-box::before,.scan-box::after,.scan-corner-bl,.scan-corner-br{content:'';position:absolute;width:26px;height:26px;}
-.scan-box::before{top:0;left:0;border-top:1px solid var(--gold);border-left:1px solid var(--gold)}
-.scan-box::after{top:0;right:0;border-top:1px solid var(--gold);border-right:1px solid var(--gold)}
-.scan-corner-bl{bottom:0;left:0;border-bottom:1px solid var(--gold);border-left:1px solid var(--gold)}
-.scan-corner-br{bottom:0;right:0;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold)}
-.scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scanline 2s ease-in-out infinite;}
+.scan-box::before{top:0;left:0;border-top:1px solid var(--silver);border-left:1px solid var(--silver)}
+.scan-box::after{top:0;right:0;border-top:1px solid var(--silver);border-right:1px solid var(--silver)}
+.scan-corner-bl{bottom:0;left:0;border-bottom:1px solid var(--silver);border-left:1px solid var(--silver)}
+.scan-corner-br{bottom:0;right:0;border-bottom:1px solid var(--silver);border-right:1px solid var(--silver)}
+.scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--silver),transparent);animation:scanline 2s ease-in-out infinite;}
 @keyframes scanline{0%,100%{top:4%}50%{top:96%}}
 .scan-bottom-bar{
   position:absolute;bottom:0;left:0;right:0;z-index:2;
@@ -203,18 +204,18 @@ textarea.inp{resize:vertical;min-height:80px}
 .scan-status{color:rgba(255,255,255,.55);font-size:10px;font-weight:300;letter-spacing:.15em;text-align:center;}
 .scan-cart-btn{
   display:flex;align-items:center;gap:10px;
-  background:rgba(196,162,101,.15);
-  border:1px solid rgba(196,162,101,.4);
-  color:var(--gold);
+  background:rgba(192,188,186,.15);
+  border:1px solid rgba(192,188,186,.4);
+  color:var(--silver);
   font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;
   padding:10px 20px;cursor:pointer;font-family:inherit;
   transition:all .2s;
 }
-.scan-cart-btn:hover{background:rgba(196,162,101,.25)}
-.scan-cart-btn .scan-n{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--gold);}
+.scan-cart-btn:hover{background:rgba(192,188,186,.25)}
+.scan-cart-btn .scan-n{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--silver);}
 .scan-added-flash{
   position:absolute;top:0;left:0;right:0;bottom:0;
-  background:rgba(196,162,101,.12);
+  background:rgba(192,188,186,.12);
   pointer-events:none;z-index:3;
   opacity:0;transition:opacity .15s;
 }
@@ -235,10 +236,10 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
   <div class="hdr-brand">
     <div class="logo-mark">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <line x1="2" y1="6" x2="10" y2="6" stroke="#C4A265" stroke-width=".8"/>
-        <line x1="6" y1="2" x2="6" y2="10" stroke="#C4A265" stroke-width=".8"/>
-        <line x1="3" y1="3" x2="9" y2="9" stroke="#C4A265" stroke-width=".5" opacity=".5"/>
-        <line x1="9" y1="3" x2="3" y2="9" stroke="#C4A265" stroke-width=".5" opacity=".5"/>
+        <line x1="2" y1="6" x2="10" y2="6" stroke="#B0ACA8" stroke-width=".8"/>
+        <line x1="6" y1="2" x2="6" y2="10" stroke="#B0ACA8" stroke-width=".8"/>
+        <line x1="3" y1="3" x2="9" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
+        <line x1="9" y1="3" x2="3" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
       </svg>
     </div>
     <div>
@@ -258,7 +259,7 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
   <div id="screen-nodata">
     <div class="state-orn">
       <div class="orn-line"></div>
-      <div class="state-ic-wrap"><span class="state-ic" style="color:var(--gold-dim)">&#x25A1;</span></div>
+      <div class="state-ic-wrap"><span class="state-ic" style="color:var(--silver-dim)">&#x25A1;</span></div>
       <div class="orn-line"></div>
     </div>
     <div class="state-ttl">QRをスキャン</div>
@@ -429,9 +430,6 @@ function renderCart() {
         <div class="cart-item-accent"></div>
         <div class="cart-item-body">
           <div class="cart-item-top">
-   div class="cart-item-accent"></div>
-        <div class="cart-item-body">
-          <div class="cart-item-top">
             <div>
               <div class="cart-hinban">${esc(item.hinban)}</div>
               ${item.hinmei ? `<div class="cart-hinmei">${esc(item.hinmei)}</div>` : ''}
@@ -595,7 +593,6 @@ async function openScanner() {
   if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream=null; }
   if(_raf) { cancelAnimationFrame(_raf); _raf=null; }
   video.srcObject = null;
-  video.load();
 
   // Try constraints in order (mobile-first)
   const constraintList = [
@@ -625,9 +622,9 @@ async function openScanner() {
 
   // Wait for video to stabilize (important on mobile)
   await new Promise(r => {
-    const check = () => { if(video.readyState >= 2) r(); else setTimeout(check, 100); };
+    const check = () => { if(video.videoWidth > 0 || video.readyState >= 2) r(); else setTimeout(check, 80); };
     check();
-    setTimeout(r, 2000); // max wait
+    setTimeout(r, 2500); // max wait
   });
 
   document.getElementById('scan-status').textContent = 'スキャン中...';
@@ -639,7 +636,7 @@ function scanTick() {
   const canvas = document.getElementById('scan-canvas');
   if(!video || !canvas || !_stream) return;
 
-  if(video.readyState >= video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+  if(video.videoWidth > 0 && video.videoHeight > 0) {
     const w = video.videoWidth, h = video.videoHeight;
     canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext('2d');
