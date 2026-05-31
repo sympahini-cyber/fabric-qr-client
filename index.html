@@ -262,10 +262,15 @@ const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6
       <div class="state-ic-wrap"><span class="state-ic" style="color:var(--silver-dim)">&#x25A1;</span></div>
       <div class="orn-line"></div>
     </div>
-    <div class="state-ttl">QRをスキャン</div>
-    <div class="state-sub">QRコードを読み込んで<br>生地をリストに追加してください</div>
-    <div style="margin-top:40px;max-width:260px;margin-left:auto;margin-right:auto">
-      <button class="btn-secondary" onclick="openScanner()">スキャンを開始</button>
+    <div class="state-ttl">Pick List</div>
+    <div class="state-sub" style="line-height:2.2">スマホのカメラアプリでQRコードを読み取ると<br>こちらに自動で追加されます</div>
+    <div style="margin-top:32px;display:flex;align-items:center;gap:10px;justify-content:center;color:var(--ink-3);font-size:9px;letter-spacing:.2em">
+      <div style="width:32px;height:1px;background:var(--border)"></div>
+      <span>OR</span>
+      <div style="width:32px;height:1px;background:var(--border)"></div>
+    </div>
+    <div style="margin-top:20px;max-width:260px;margin-left:auto;margin-right:auto">
+      <button class="btn-secondary" onclick="openScanner()" style="font-size:9px;letter-spacing:.18em">ブラウザ内カメラでスキャン</button>
     </div>
   </div>
 
@@ -387,6 +392,10 @@ let _lastCodeTime = 0;
 /* ── UTILS ── */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
+function saveCart() {
+  try { localStorage.setItem('_fc_cart', JSON.stringify(_cart)); } catch(e) {}
+}
+
 function showScreen(name) {
   ['nodata','cart','sending','done','error'].forEach(s => {
     const el = document.getElementById('screen-'+s);
@@ -456,6 +465,7 @@ function renderCart() {
 
 function removeItem(idx) {
   _cart.splice(idx, 1);
+  saveCart();
   updateCartBadge();
   if(_cart.length === 0) { showScreen('nodata'); return; }
   renderCart();
@@ -464,6 +474,7 @@ function removeItem(idx) {
 function updateQty(idx, val) {
   const n = parseInt(val) || 1;
   _cart[idx].qty = Math.max(1, n);
+  saveCart();
 }
 
 /* ── PARSE QR DATA → FABRIC OBJECT ── */
@@ -500,6 +511,7 @@ function addToCart(data) {
     return false;
   }
   _cart.push(fabric);
+  saveCart();
   updateCartBadge();
   showFlash();
   document.getElementById('scan-status').textContent = '✓ 追加: ' + fabric.hinban;
@@ -515,10 +527,17 @@ function showFlash() {
 
 /* ── INIT ── */
 function init() {
+  // Restore persisted cart
+  try {
+    const saved = JSON.parse(localStorage.getItem('_fc_cart') || '[]');
+    if(Array.isArray(saved)) _cart = saved;
+  } catch(e) {}
+
+  // Handle QR URL params (from native camera app)
   const params = new URLSearchParams(location.search);
   const hinban = params.get('id');
-  if(hinban) {
-    const fabric = {
+  if(hinban && !_cart.some(i => i.hinban === hinban)) {
+    _cart.push({
       hinban,
       hinmei:   params.get('nm') || '',
       haba:     params.get('w')  || '',
@@ -526,12 +545,14 @@ function init() {
       konritsu: params.get('k')  || '',
       ito:      params.get('t')  || '',
       qty: 1
-    };
-    _cart.push(fabric);
-    renderCart();
-  } else {
-    showScreen('nodata');
+    });
+    saveCart();
   }
+  // Clean URL without reload so back-navigation works cleanly
+  if(location.search) history.replaceState(null, '', location.pathname);
+
+  if(_cart.length > 0) renderCart();
+  else showScreen('nodata');
 }
 
 /* ── SUBMIT ── */
@@ -563,6 +584,7 @@ async function submitForm() {
 
 function startNewSession() {
   _cart = [];
+  saveCart();
   updateCartBadge();
   // Clear form
   ['r-name','r-company','r-tel','r-email','r-memo'].forEach(id=>{
@@ -644,7 +666,7 @@ function scanTick() {
     const imgData = ctx.getImageData(0, 0, w, h);
     const code = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
     if(code && code.data) {
-      const now = Date.now();
+       const now = Date.now();
       // Debounce: same code within 3s ignored
       if(code.data !== _lastCode || now - _lastCodeTime > 3000) {
         _lastCode = code.data;
