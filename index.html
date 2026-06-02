@@ -3,773 +3,459 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pick List</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+<title>PICK LIST // Sample Request</title>
 <style>
 :root {
-  /* SOKI Atami — 石・木・温泉 */
-  --bg:#070608; --bg-elev:#100E12; --bg-card:#181620;
-  --ink-0:#EDE6D8; --ink-1:#C4BAA4; --ink-2:#847A6C; --ink-3:#4A4640; --ink-4:#28252A;
-  --silver:#C0BCBA; --silver-dim:#6A6462; --silver-lo:rgba(192,188,186,.08); --silver-mid:rgba(192,188,186,.20);
-  --border:rgba(192,188,186,.13); --border-hi:rgba(192,188,186,.28);
-  --sage:#4E7A5C; --ruby:#A84840;
+  --bg:     #080808;
+  --bg2:    #101010;
+  --bg3:    #181818;
+  --border: #2a2a2a;
+  --bord2:  #404040;
+  --text:   #d4d0c8;
+  --text2:  #8a8680;
+  --text3:  #555250;
+  --accent: #e8e4dc;
+  --red:    #c0392b;
+  --red2:   #8b2a20;
+  --green:  #5a7a50;
+  --mono:   'Courier New','Lucida Console',monospace;
+  --sans:   'Yu Gothic','YuGothic','Hiragino Kaku Gothic ProN',sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-html,body{min-height:100%;background:var(--bg);color:var(--ink-0);font-family:'Yu Gothic','游ゴシック','YuGothic','Noto Sans JP','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.8;-webkit-font-smoothing:antialiased;}
-body{padding-bottom:80px}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;}
+
+/* scanline */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);}
 
 /* ── HEADER ── */
-.hdr{
-  position:sticky;top:0;z-index:10;
-  background:rgba(7,6,8,.95);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  padding:18px 24px;
-  display:flex;align-items:center;justify-content:space-between;
+#header{
+  position:sticky;top:0;z-index:100;
+  background:var(--bg2);border-bottom:1px solid var(--bord2);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
 }
-.hdr-brand{display:flex;align-items:center;gap:14px}
-.logo-mark{
-  width:32px;height:32px;
-  border:1px solid var(--silver-dim);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;flex-shrink:0;
+.hdr-title{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--accent);}
+.hdr-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;margin-top:2px;}
+.hdr-badge{
+  font-family:var(--mono);font-size:11px;color:var(--bg);
+  background:var(--accent);padding:3px 10px;
+  letter-spacing:.05em;
 }
-.logo-mark::before{content:'';position:absolute;inset:3px;border:1px solid rgba(192,188,186,.18);}
-.hdr-name{
-  font-family:'Cormorant Garamond',Georgia,serif;
-  font-size:15px;font-weight:300;letter-spacing:.5em;
-  color:var(--ink-0);text-transform:uppercase;line-height:1;
-}
-.hdr-sub{font-size:8px;font-weight:300;letter-spacing:.3em;color:var(--silver-dim);text-transform:uppercase;margin-top:4px;}
-.cart-badge{
-  display:flex;align-items:center;gap:10px;
-  font-size:9px;font-weight:300;letter-spacing:.2em;color:var(--ink-3);
-}
-.cart-count{
-  min-width:24px;height:24px;
-  background:var(--silver);color:var(--bg);
-  border-radius:0;
-  font-size:11px;font-weight:400;
-  display:flex;align-items:center;justify-content:center;
-  padding:0 6px;
-  transition:all .2s;
-}
-.cart-count.has-items{background:var(--silver)}
-.cart-count.empty{background:var(--ink-4);color:var(--ink-2)}
+.hdr-badge.empty{background:var(--bg3);color:var(--text3);border:1px solid var(--border);}
 
-/* ── LAYOUT ── */
-.wrap{max-width:480px;margin:0 auto;padding:40px 24px}
+/* ── SCREENS ── */
+.screen{display:none;min-height:calc(100vh - 54px);}
+.screen.active{display:block;}
 
-/* ── DIVIDERS ── */
-.sec{display:flex;align-items:center;gap:14px;margin:0 0 22px;}
-.sec-line{flex:1;height:1px;background:var(--border)}
-.sec-lbl{font-size:8px;font-weight:300;letter-spacing:.28em;color:var(--silver-dim);text-transform:uppercase;white-space:nowrap;}
+/* ── NODATA ── */
+#screen-nodata{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
+}
+.nd-icon{font-size:32px;margin-bottom:20px;opacity:.3;}
+.nd-title{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--text2);margin-bottom:8px;}
+.nd-desc{font-size:12px;color:var(--text3);line-height:1.7;}
+.nd-arrow{font-family:var(--mono);font-size:28px;color:var(--text3);margin:24px 0 8px;animation:bounce 1.8s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 
-/* ── CART ITEMS ── */
-.cart-item{
-  background:var(--bg-card);border:1px solid var(--border);
-  margin-bottom:10px;position:relative;overflow:hidden;
-}
-.cart-item-accent{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--silver),transparent);opacity:.6;}
-.cart-item-body{padding:16px 20px 14px;}
-.cart-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
-.cart-hinban{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:300;font-style:italic;color:var(--silver);letter-spacing:.04em;line-height:1.2;}
-.cart-hinmei{font-size:10px;font-weight:300;letter-spacing:.15em;color:var(--ink-2);text-transform:uppercase;margin-top:2px;}
-.cart-remove{
-  background:transparent;border:1px solid var(--ink-4);color:var(--ink-3);
-  width:26px;height:26px;flex-shrink:0;
-  font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
-.cart-remove:hover{border-color:var(--ruby);color:var(--ruby);}
-.cart-specs{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--border);}
-.cart-spec{padding:8px 12px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
-.cart-spec:nth-child(even){border-right:none}
-.cart-spec-lbl{font-size:7.5px;font-weight:400;letter-spacing:.2em;color:var(--silver-dim);text-transform:uppercase;margin-bottom:3px;}
-.cart-spec-val{font-size:12px;font-weight:300;color:var(--ink-1);}
-.cart-qty-row{display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);}
-.cart-qty-lbl{font-size:8px;font-weight:300;letter-spacing:.2em;color:var(--silver-dim);text-transform:uppercase;flex:1;}
-.cart-qty-input{
-  width:64px;background:var(--bg-elev);
-  border:1px solid var(--border);border-top-color:var(--silver-mid);
-  color:var(--ink-0);font-size:14px;font-weight:300;
-  font-family:inherit;padding:6px 10px;
-  outline:none;text-align:center;border-radius:0;
-  -webkit-appearance:none;appearance:none;
-}
-.cart-qty-input:focus{border-color:var(--silver-dim)}
-.cart-qty-unit{font-size:11px;font-weight:300;color:var(--ink-2);letter-spacing:.1em;}
+/* ── CART SCREEN ── */
+#screen-cart{padding:16px;}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--text3);
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 
-/* ── INPUTS ── */
-.inp-row{margin-bottom:18px}
-.inp-lbl{display:block;font-size:8px;font-weight:300;letter-spacing:.25em;color:var(--silver-dim);text-transform:uppercase;margin-bottom:8px;}
-.inp-lbl .req{color:var(--ruby);margin-left:4px}
-.inp{
-  width:100%;background:var(--bg-elev);
-  border:1px solid var(--border);border-top-color:var(--silver-mid);
-  color:var(--ink-0);font-size:15px;font-weight:300;font-family:inherit;
-  padding:12px 16px;outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;appearance:none;border-radius:0;
-}
-.inp:focus{border-color:var(--silver-dim);box-shadow:0 0 0 1px var(--silver-lo)}
-.inp::placeholder{color:var(--ink-3)}
-textarea.inp{resize:vertical;min-height:80px}
+/* item card */
+.item-card{background:var(--bg2);border:1px solid var(--border);margin-bottom:8px;position:relative;}
+.item-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--bord2);}
+.item-top{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 12px 8px 14px;}
+.item-hinban{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent);}
+.item-hinmei{font-size:12px;color:var(--text2);margin-top:2px;}
+.item-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;}
+.item-del:active{color:var(--red);}
+.item-specs{padding:0 14px 8px;display:flex;flex-wrap:wrap;gap:4px;}
+.spec-tag{font-family:var(--mono);font-size:9px;color:var(--text3);
+  border:1px solid var(--border);padding:2px 6px;}
+.item-qty{display:flex;align-items:center;gap:8px;padding:8px 14px 12px;border-top:1px solid var(--border);}
+.qty-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;}
+.qty-ctrl{display:flex;align-items:center;gap:0;}
+.qty-btn{width:32px;height:32px;background:var(--bg3);border:1px solid var(--bord2);
+  color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.qty-btn:active{background:var(--bord2);}
+.qty-num{width:44px;text-align:center;background:var(--bg3);border-top:1px solid var(--bord2);
+  border-bottom:1px solid var(--bord2);border-left:none;border-right:none;
+  color:var(--accent);font-family:var(--mono);font-size:14px;height:32px;padding:0;}
 
-/* ── BUTTONS ── */
-.btn-primary{
-  display:block;width:100%;padding:16px;
-  background:var(--silver);color:var(--bg);
-  font-size:10px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;
-  border:none;border-radius:0;cursor:pointer;font-family:inherit;
-  transition:all .2s;margin-top:8px;position:relative;overflow:hidden;
+/* scan hint */
+.scan-hint{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:12px 14px;margin-bottom:12px;
+  font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.06em;
+  display:flex;align-items:center;gap:8px;
 }
-.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 50%);pointer-events:none;}
-.btn-primary:hover{background:#D4D0CE;letter-spacing:.38em}
-.btn-primary:active{transform:translateY(1px);opacity:.9}
-.btn-primary:disabled{opacity:.3;cursor:not-allowed;transform:none;letter-spacing:.35em}
+.scan-hint-icon{font-size:16px;flex-shrink:0;}
+
+/* form */
+.form-section{margin-top:20px;}
+.form-group{margin-bottom:12px;}
+.form-group label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  color:var(--text3);margin-bottom:5px;}
+.form-group input,.form-group textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--bord2);
+  color:var(--text);padding:10px 12px;font-family:var(--sans);font-size:14px;
+  outline:none;border-radius:0;transition:border-color .1s;
+  -webkit-appearance:none;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--text2);}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+.form-group textarea{resize:vertical;min-height:70px;}
+
+/* required */
+.req{color:var(--accent);margin-left:2px;}
+
+/* submit btn */
+.btn-submit{
+  width:100%;padding:16px;margin-top:8px;
+  background:var(--accent);color:var(--bg);
+  border:none;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+  cursor:pointer;transition:background .1s;
+}
+.btn-submit:active{background:var(--text);}
+.btn-submit:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;}
+
+/* ── SENDING ── */
+#screen-sending{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
+}
+.spinner{width:32px;height:32px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .8s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── DONE ── */
+#screen-done{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
+}
+.done-icon{font-family:var(--mono);font-size:36px;color:var(--green);margin-bottom:16px;}
+.done-title{font-family:var(--mono);font-size:13px;letter-spacing:.15em;color:var(--accent);margin-bottom:8px;}
+.done-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:28px;}
 .btn-secondary{
-  display:block;width:100%;padding:15px;
-  background:transparent;color:var(--ink-1);
-  font-size:10px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;
-  border:1px solid var(--border-hi);border-radius:0;
-  cursor:pointer;font-family:inherit;transition:all .2s;
+  display:inline-block;padding:12px 24px;
+  background:transparent;border:1px solid var(--bord2);
+  color:var(--text2);font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;cursor:pointer;
 }
-.btn-secondary:hover{border-color:var(--silver-dim);color:var(--silver);background:var(--silver-lo)}
-.btn-ghost{
-  display:block;width:100%;padding:12px;
-  background:transparent;color:var(--ink-3);
-  font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;
-  border:none;cursor:pointer;font-family:inherit;transition:color .2s;
-}
-.btn-ghost:hover{color:var(--ink-2)}
+.btn-secondary:active{background:var(--bg3);}
 
-/* ── EMPTY CART screen ── */
-#screen-nodata{display:none;text-align:center;padding:80px 0}
-#screen-cart{display:none}
-#screen-sending,#screen-done,#screen-error{display:none;text-align:center;padding:80px 0}
+/* ── ERROR ── */
+#screen-error{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
+}
+.err-icon{font-family:var(--mono);font-size:28px;color:var(--red);margin-bottom:16px;}
+.err-msg{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:24px;word-break:break-all;}
 
-.state-orn{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:32px;}
-.orn-line{width:44px;height:1px;background:var(--border-hi)}
-.state-ic-wrap{
-  width:50px;height:50px;border:1px solid var(--border-hi);
-  display:flex;align-items:center;justify-content:center;position:relative;
+/* ── NO-ENDPOINT WARN ── */
+.endpoint-warn{
+  background:var(--bg2);border:1px solid var(--red2);
+  padding:10px 12px;margin-bottom:12px;
+  font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.06em;
+  display:none;
 }
-.state-ic-wrap::before{content:'';position:absolute;inset:4px;border:1px solid var(--border);}
-.state-ic{font-size:17px;line-height:1}
-.state-ttl{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:300;font-style:italic;letter-spacing:.06em;color:var(--ink-0);margin-bottom:12px;line-height:1.3;}
-.state-sub{font-size:12px;font-weight:300;color:var(--ink-2);line-height:2;}
-.spinner{width:30px;height:30px;border:1px solid var(--border);border-top-color:var(--silver);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 26px;}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── WARN BANNER ── */
-.banner-warn{background:var(--bg-card);border:1px solid rgba(196,90,78,.3);border-left:2px solid var(--ruby);padding:12px 16px;margin-bottom:24px;font-size:12px;font-weight:300;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start;}
-
-/* ── QR SCANNER (fullscreen) ── */
-#screen-scanner{display:none;position:fixed;inset:0;z-index:100;background:#000;flex-direction:column;}
-#screen-scanner.open{display:flex}
-.scan-hdr{
-  position:absolute;top:0;left:0;right:0;z-index:2;
-  padding:safe-top 20px 0;padding-top:max(20px,env(safe-area-inset-top));
-  display:flex;justify-content:space-between;align-items:center;
-  background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);
-  padding-bottom:28px;
-}
-.scan-title{color:rgba(255,255,255,.7);font-size:10px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;}
-.scan-close{
-  color:var(--ink-0);background:rgba(0,0,0,.5);
-  border:1px solid rgba(192,188,186,.3);
-  width:40px;height:40px;font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-}
-#scan-video{width:100%;height:100%;object-fit:cover;display:block;}
-#scan-canvas{display:none}
-.scan-frame{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.scan-box{width:220px;height:220px;position:relative;}
-.scan-box::before,.scan-box::after,.scan-corner-bl,.scan-corner-br{content:'';position:absolute;width:26px;height:26px;}
-.scan-box::before{top:0;left:0;border-top:1px solid var(--silver);border-left:1px solid var(--silver)}
-.scan-box::after{top:0;right:0;border-top:1px solid var(--silver);border-right:1px solid var(--silver)}
-.scan-corner-bl{bottom:0;left:0;border-bottom:1px solid var(--silver);border-left:1px solid var(--silver)}
-.scan-corner-br{bottom:0;right:0;border-bottom:1px solid var(--silver);border-right:1px solid var(--silver)}
-.scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--silver),transparent);animation:scanline 2s ease-in-out infinite;}
-@keyframes scanline{0%,100%{top:4%}50%{top:96%}}
-.scan-bottom-bar{
-  position:absolute;bottom:0;left:0;right:0;z-index:2;
-  background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 100%);
-  padding:24px 20px max(24px,env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-}
-.scan-status{color:rgba(255,255,255,.55);font-size:10px;font-weight:300;letter-spacing:.15em;text-align:center;}
-.scan-cart-btn{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(192,188,186,.15);
-  border:1px solid rgba(192,188,186,.4);
-  color:var(--silver);
-  font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;
-  padding:10px 20px;cursor:pointer;font-family:inherit;
-  transition:all .2s;
-}
-.scan-cart-btn:hover{background:rgba(192,188,186,.25)}
-.scan-cart-btn .scan-n{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--silver);}
-.scan-added-flash{
-  position:absolute;top:0;left:0;right:0;bottom:0;
-  background:rgba(192,188,186,.12);
-  pointer-events:none;z-index:3;
-  opacity:0;transition:opacity .15s;
-}
-.scan-added-flash.show{opacity:1}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:0}
-.req-note{font-size:10px;font-weight:300;color:var(--ink-3);letter-spacing:.1em;margin-bottom:24px;}
+/* bottom padding for scrolling */
+.bottom-pad{height:40px;}
 </style>
 </head>
 <body>
-<script>
-const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
-<\/script>
 
-<header class="hdr">
-  <div class="hdr-brand">
-    <div class="logo-mark">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <line x1="2" y1="6" x2="10" y2="6" stroke="#B0ACA8" stroke-width=".8"/>
-        <line x1="6" y1="2" x2="6" y2="10" stroke="#B0ACA8" stroke-width=".8"/>
-        <line x1="3" y1="3" x2="9" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
-        <line x1="9" y1="3" x2="3" y2="9" stroke="#B0ACA8" stroke-width=".5" opacity=".5"/>
-     </svg>
-    </div>
-    <div>
-      <div class="hdr-name">Pick&nbsp;List</div>
-      <div class="hdr-sub">Sample Request</div>
-    </div>
+<!-- HEADER -->
+<div id="header">
+  <div>
+    <div class="hdr-title">PICK LIST</div>
+    <div class="hdr-sub">// Sample Request</div>
   </div>
-  <div class="cart-badge">
-    <span id="hdr-cart-label" style="display:none;letter-spacing:.12em;color:var(--ink-2)">リスト</span>
-    <div class="cart-count empty" id="hdr-cart-count">0</div>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <!-- NO DATA (empty cart, no URL params) -->
-  <div id="screen-nodata">
-    <div class="state-orn">
-      <div class="orn-line"></div>
-      <div class="state-ic-wrap"><span class="state-ic" style="color:var(--silver-dim)">&#x25A1;</span></div>
-      <div class="orn-line"></div>
-    </div>
-    <div class="state-ttl">Pick List</div>
-    <div class="state-sub" style="line-height:2.2">スマホのカメラアプリでQRコードを読み取ると<br>こちらに自動で追加されます</div>
-    <div style="margin-top:32px;display:flex;align-items:center;gap:10px;justify-content:center;color:var(--ink-3);font-size:9px;letter-spacing:.2em">
-      <div style="width:32px;height:1px;background:var(--border)"></div>
-      <span>OR</span>
-      <div style="width:32px;height:1px;background:var(--border)"></div>
-    </div>
-    <div style="margin-top:20px;max-width:260px;margin-left:auto;margin-right:auto">
-      <button class="btn-secondary" onclick="openScanner()" style="font-size:9px;letter-spacing:.18em">ブラウザ内カメラでスキャン</button>
-    </div>
-  </div>
-
-  <!-- CART + FORM -->
-  <div id="screen-cart">
-    <div class="sec"><div class="sec-line"></div><div class="sec-lbl">Pick List</div><div class="sec-line"></div></div>
-
-    <div id="cart-items"></div>
-
-    <div style="margin-bottom:28px;display:flex;align-items:center;gap:14px;padding:14px 0">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <div style="font-size:9px;font-weight:300;letter-spacing:.18em;color:var(--ink-3);text-align:center;line-height:2">
-        スマホのカメラアプリでQRコードを読み取ると<br>続けてリストに追加できます
-      </div>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-
-    <div class="banner-warn" id="no-endpoint-warn" style="display:none">
-      <span style="color:var(--ruby);font-size:13px;margin-top:1px">&#x26A0;</span>
-      <div>エンドポイントURLが未設定のため申請できません。</div>
-    </div>
-
-    <div class="sec" style="margin-top:8px"><div class="sec-line"></div><div class="sec-lbl">送信者情報</div><div class="sec-line"></div></div>
-
-    <div class="inp-row">
-      <label class="inp-lbl">氏名 <span class="req">*</span></label>
-      <input type="text" class="inp" id="r-name" placeholder="山田 太郎" autocomplete="name">
-    </div>
-    <div class="inp-row">
-      <label class="inp-lbl">会社名</label>
-      <input type="text" class="inp" id="r-company" placeholder="株式会社　　" autocomplete="organization">
-    </div>
-    <div class="inp-row">
-      <label class="inp-lbl">Mobile</label>
-      <input type="tel" class="inp" id="r-tel" placeholder="090-0000-0000" autocomplete="tel" inputmode="tel">
-    </div>
-    <div class="inp-row">
-      <label class="inp-lbl">Mail</label>
-      <input type="email" class="inp" id="r-email" placeholder="your@email.com" autocomplete="email" inputmode="email">
-    </div>
-    <div class="inp-row">
-      <label class="inp-lbl">備考</label>
-      <textarea class="inp" id="r-memo" placeholder="ご要望のカラーや仕様をご記入ください"></textarea>
-    </div>
-
-    <div class="req-note"><span class="req" style="color:var(--ruby)">*</span> は必須項目です</div>
-    <button class="btn-primary" id="btn-submit" onclick="submitForm()">送　信　す　る</button>
-  </div>
-
-  <!-- SENDING -->
-  <div id="screen-sending">
-    <div class="spinner"></div>
-    <div class="state-ttl" style="font-size:20px">送信中</div>
-    <div class="state-sub">しばらくお待ちください</div>
-  </div>
-
-  <!-- DONE -->
-  <div id="screen-done">
-    <div class="state-orn">
-      <div class="orn-line"></div>
-      <div class="state-ic-wrap"><span class="state-ic" style="color:var(--sage)">&#x2713;</span></div>
-      <div class="orn-line"></div>
-    </div>
-    <div class="state-ttl">送信完了</div>
-    <div class="state-sub">リクエストを受け付けました。<br>担当者よりご連絡いたします。</div>
-    <div style="margin-top:40px;max-width:280px;margin-left:auto;margin-right:auto;display:flex;flex-direction:column;gap:10px">
-      <button class="btn-secondary" onclick="startNewSession()">新しいリストをスキャン</button>
-      <button class="btn-ghost" onclick="goBackToCart()">← リストに戻る</button>
-    </div>
-  </div>
-
-  <!-- ERROR -->
-  <div id="screen-error">
-    <div class="state-orn">
-      <div class="orn-line"></div>
-      <div class="state-ic-wrap"><span class="state-ic" style="color:var(--ruby)">&#x2715;</span></div>
-      <div class="orn-line"></div>
-    </div>
-    <div class="state-ttl">送信に失敗しました</div>
-    <div class="state-sub" id="err-msg">もう一度お試しください</div>
-    <button onclick="showScreen('cart')" style="margin-top:28px;padding:13px 28px;background:transparent;color:var(--ink-1);border:1px solid var(--border-hi);font-size:10px;letter-spacing:.22em;cursor:pointer;font-family:inherit;text-transform:uppercase">戻　る</button>
-  </div>
-
-</div><!-- /wrap -->
-
-<!-- SCANNER OVERLAY -->
-<div id="screen-scanner">
-  <video id="scan-video" playsinline autoplay muted webkit-playsinline x5-playsinline></video>
-  <canvas id="scan-canvas"></canvas>
-  <div class="scan-frame">
-    <div class="scan-box">
-      <div class="scan-line"></div>
-      <div class="scan-corner-bl"></div>
-      <div class="scan-corner-br"></div>
-    </div>
-  </div>
-  <div class="scan-hdr">
-    <div class="scan-title">QRをスキャン</div>
-    <button class="scan-close" onclick="closeScanner()">&#x2715;</button>
-  </div>
-  <div class="scan-bottom-bar">
-    <div class="scan-status" id="scan-status">カメラを起動しています...</div>
-    <button class="scan-cart-btn" id="scan-cart-btn" onclick="closeScanner()" style="display:none">
-      <span id="scan-cart-n" class="scan-n">0</span>
-      <span>件のリストを確認</span>
-    </button>
-  </div>
-  <div class="scan-added-flash" id="scan-flash"></div>
+  <div class="hdr-badge empty" id="hdr-badge">0 件</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"><\/script>
+<!-- NODATA -->
+<div id="screen-nodata" class="screen active">
+  <div class="nd-icon">□</div>
+  <div class="nd-title">リストは空です</div>
+  <div class="nd-desc">
+    スマホのカメラアプリで<br>QRコードを読み取ると<br>自動でリストに追加されます
+  </div>
+  <div class="nd-arrow">↓</div>
+  <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;">
+    読み取るたびに追加されます
+  </div>
+</div>
+
+<!-- CART -->
+<div id="screen-cart" class="screen">
+  <div style="padding:16px 16px 0;">
+    <div class="scan-hint">
+      <span class="scan-hint-icon">📷</span>
+      カメラでQRを読み取ると続けて追加できます
+    </div>
+    <div class="endpoint-warn" id="endpoint-warn">
+      ⚠ エンドポイントURLが未設定のため送信できません
+    </div>
+    <div class="section-label">// リスト</div>
+    <div id="cart-items"></div>
+  </div>
+
+  <div class="form-section" style="padding:0 16px;">
+    <div class="section-label">// 送信者情報</div>
+    <div class="form-group">
+      <label>氏名<span class="req">*</span></label>
+      <input type="text" id="r-name" placeholder="山田 太郎" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label>会社名</label>
+      <input type="text" id="r-company" placeholder="株式会社〇〇" autocomplete="organization">
+    </div>
+    <div class="form-group">
+      <label>Mobile</label>
+      <input type="tel" id="r-tel" placeholder="090-0000-0000" autocomplete="tel">
+    </div>
+    <div class="form-group">
+      <label>mail</label>
+      <input type="email" id="r-email" placeholder="example@mail.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>備考</label>
+      <textarea id="r-memo" placeholder="任意"></textarea>
+    </div>
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+      送　信　す　る
+    </button>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- SENDING -->
+<div id="screen-sending" class="screen">
+  <div class="spinner"></div>
+  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;">送信中...</div>
+</div>
+
+<!-- DONE -->
+<div id="screen-done" class="screen">
+  <div class="done-icon">✓</div>
+  <div class="done-title">送信完了</div>
+  <div class="done-desc">
+    リクエストを受け付けました。<br>担当者よりご連絡いたします。
+  </div>
+  <button class="btn-secondary" onclick="startNewSession()">新しいリストをスキャン</button>
+</div>
+
+<!-- ERROR -->
+<div id="screen-error" class="screen">
+  <div class="err-icon">✕</div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:8px;letter-spacing:.08em;">送信に失敗しました</div>
+  <div class="err-msg" id="err-msg"></div>
+  <button class="btn-secondary" onclick="goBackToCart()">戻る</button>
+</div>
+
 <script>
 'use strict';
 
-/* ── STATE ── */
-let _cart = [];      // [{hinban,hinmei,haba,me,konritsu,ito,qty},...]
-let _stream = null;
-let _raf = null;
-let _scanning = false;
-let _lastCode = '';
-let _lastCodeTime = 0;
-let _qrScanner = null;     // QrScanner instance (nimiq)
-let _qrScannerLib = null;  // cached QrScanner class
+// GASエンドポイント（変更する場合はここを書き換えるか localStorage の 'pl_endpoint' に設定）
+var DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
+var ENDPOINT = (function(){
+  try{ return localStorage.getItem('pl_endpoint') || DEFAULT_ENDPOINT; }catch(e){ return DEFAULT_ENDPOINT; }
+})();
 
-/* ── UTILS ── */
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+var _cart = [];
 
-function saveCart() {
-  try { localStorage.setItem('_fc_cart', JSON.stringify(_cart); } catch(e) {}
+// ── ユーティリティ ──
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function saveCart(){
+  try{ localStorage.setItem('_fc_cart', JSON.stringify(_cart)); }catch(e){}
 }
 
-function showScreen(name) {
-  ['nodata','cart','sending','done','error'].forEach(s => {
-    const el = document.getElementById('screen-'+s);
-    if(el) el.style.display = s === name ? 'block' : 'none';
+function loadCart(){
+  try{
+    var saved = JSON.parse(localStorage.getItem('_fc_cart') || '[]');
+    if(Array.isArray(saved)) _cart = saved;
+  }catch(e){ _cart = []; }
+}
+
+// ── 画面切替 ──
+function showScreen(name){
+  var screens = ['nodata','cart','sending','done','error'];
+  screens.forEach(function(s){
+    var el = document.getElementById('screen-'+s);
+    if(el) el.classList.toggle('active', s === name);
   });
 }
 
-function updateCartBadge() {
-  const n = _cart.length;
-  const el = document.getElementById('hdr-cart-count');
-  const lbl = document.getElementById('hdr-cart-label');
-  el.textContent = n;
-  el.className = 'cart-count ' + (n > 0 ? 'has-items' : 'empty');
-  if(lbl) lbl.style.display = n > 0 ? 'inline' : 'none';
-  // scanner button
-  const scanBtn = document.getElementById('scan-cart-btn');
-  const scanN = document.getElementById('scan-cart-n');
-  if(scanBtn && scanN) {
-    scanN.textContent = n;
-    scanBtn.style.display = n > 0 ? 'flex' : 'none';
-  }
+function updateBadge(){
+  var el = document.getElementById('hdr-badge');
+  if(!el) return;
+  var n = _cart.length;
+  el.textContent = n + ' 件';
+  el.className = 'hdr-badge' + (n > 0 ? '' : ' empty');
 }
 
-/* ── CART RENDERING ── */
-function renderCart() {
-  const container = document.getElementById('cart-items');
-  if(!container) return;
-  if(_cart.length === 0) { showScreen('nodata'); return; }
+// ── カートレンダリング ──
+function renderCart(){
+  if(_cart.length === 0){ showScreen('nodata'); updateBadge(); return; }
 
-  container.innerHTML = _cart.map((item, idx) => {
-    const specs = [];
+  var container = document.getElementById('cart-items');
+  container.innerHTML = _cart.map(function(item, idx){
+    var specs = [];
     if(item.haba)     specs.push(['生地巾', item.haba]);
     if(item.me)       specs.push(['目　付', item.me]);
     if(item.konritsu) specs.push(['混　率', item.konritsu]);
     if(item.ito)      specs.push(['使用糸', item.ito]);
-    const specsHtml = specs.length > 0
-      ? `<div class="cart-specs">${specs.map(([l,v])=>`<div class="cart-spec"><div class="cart-spec-lbl">${esc(l)}</div><div class="cart-spec-val">${esc(v)}</div></div>`).join('')}</div>`
+    var specHtml = specs.length
+      ? specs.map(function(s){ return '<span class="spec-tag">'+esc(s[0])+' : '+esc(s[1])+'</span>'; }).join('')
       : '';
-    return `
-      <div class="cart-item" id="cart-item-${idx}">
-        <div class="cart-item-accent"></div>
-        <div class="cart-item-body">
-          <div class="cart-item-top">
-            <div>
-              <div class="cart-hinban">${esc(item.hinban)}</div>
-              ${item.hinmei ? `<div class="cart-hinmei">${esc(item.hinmei)}</div>` : ''}
-            </div>
-            <button class="cart-remove" onclick="removeItem(${idx})" title="削除">&#x2715;</button>
-          </div>
-        </div>
-        ${specsHtml}
-        <div class="cart-qty-row">
-          <span class="cart-qty-lbl">数量</span>
-          <input type="number" class="cart-qty-input" min="1" step="1" value="${item.qty||1}" oninput="updateQty(${idx},this.value)" inputmode="numeric">
-          <span class="cart-qty-unit">部</span>
-        </div>
-      </div>`;
+    return '<div class="item-card">'
+      +'<div class="item-top">'
+        +'<div>'
+          +'<div class="item-hinban">'+esc(item.hinban)+'</div>'
+          +(item.hinmei ? '<div class="item-hinmei">'+esc(item.hinmei)+'</div>' : '')
+        +'</div>'
+        +'<button class="item-del" onclick="removeItem('+idx+')">✕</button>'
+      +'</div>'
+      +(specHtml ? '<div class="item-specs">'+specHtml+'</div>' : '')
+      +'<div class="item-qty">'
+        +'<span class="qty-label">数　量</span>'
+        +'<div class="qty-ctrl">'
+          +'<button class="qty-btn" onclick="changeQty('+idx+',-1)">－</button>'
+          +'<input class="qty-num" type="number" min="1" value="'+item.qty+'" onchange="setQty('+idx+',this.value)" inputmode="numeric">'
+          +'<button class="qty-btn" onclick="changeQty('+idx+',1)">＋</button>'
+        +'</div>'
+        +'<span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:4px;">部</span>'
+      +'</div>'
+      +'</div>';
   }).join('');
 
-  if(!ENDPOINT) {
-    document.getElementById('no-endpoint-warn').style.display = 'flex';
-    document.getElementById('btn-submit').disabled = true;
+  // エンドポイント警告
+  var warn = document.getElementById('endpoint-warn');
+  var btn  = document.getElementById('btn-submit');
+  if(!ENDPOINT){
+    if(warn) warn.style.display='block';
+    if(btn)  btn.disabled=true;
+  } else {
+    if(warn) warn.style.display='none';
+    if(btn)  btn.disabled=false;
   }
+
   showScreen('cart');
-  updateCartBadge();
+  updateBadge();
 }
 
-function removeItem(idx) {
-  _cart.splice(idx, 1);
+function removeItem(idx){
+  _cart.splice(idx,1);
   saveCart();
-  updateCartBadge();
-  if(_cart.length === 0) { showScreen('nodata'); return; }
+  if(_cart.length === 0){ showScreen('nodata'); updateBadge(); return; }
   renderCart();
 }
 
-function updateQty(idx, val) {
-  const n = parseInt(val) || 1;
-  _cart[idx].qty = Math.max(1, n);
+function changeQty(idx, delta){
+  _cart[idx].qty = Math.max(1, (_cart[idx].qty||1) + delta);
+  saveCart();
+  renderCart();
+}
+
+function setQty(idx, val){
+  _cart[idx].qty = Math.max(1, parseInt(val)||1);
   saveCart();
 }
 
-/* ── PARSE QR DATA → FABRIC OBJECT ── */
-function parseQRToFabric(data) {
-  let params;
-  try {
-    const u = new URL(data);
-    params = u.searchParams;
-  } catch {
-    // plain hinban text
-    return { hinban: data, hinmei:'', haba:'', me:'', konritsu:'', ito:'', qty:1 };
-  }
-  const hinban = params.get('id') || '';
-  if(!hinban) return null;
-  return {
-    hinban,
-    hinmei:   params.get('nm') || '',
-    haba:     params.get('w')  || '',
-    me:       params.get('g')  || '',
-    konritsu: params.get('k')  || '',
-    ito:      params.get('t')  || '',
-    qty: 1
-  };
-}
-
-function addToCart(data) {
-  const fabric = parseQRToFabric(data);
-  if(!fabric || !fabric.hinban) return false;
-  // Avoid duplicates
-  if(_cart.some(i => i.hinban === fabric.hinban)) {
-    // Just flash - already in cart
-    showFlash();
-    document.getElementById('scan-status').textContent = '✓ 既にリスト済み: ' + fabric.hinban;
-    return false;
-  }
-  _cart.push(fabric);
-  saveCart();
-  updateCartBadge();
-  showFlash();
-  document.getElementById('scan-status').textContent = '✓ 追加: ' + fabric.hinban;
-  return true;
-}
-
-function showFlash() {
-  const flash = document.getElementById('scan-flash');
-  if(!flash) return;
-  flash.classList.add('show');
-  setTimeout(() => flash.classList.remove('show'), 200);
-}
-
-/* ── INIT ── */
-function init() {
-  // Restore persisted cart
-  try {
-    const saved = JSON.parse(localStorage.getItem('_fc_cart') || '[]');
-    if(Array.isArray(saved)) _cart = saved;
-  } catch(e) {}
-
-  // Handle QR URL params (from native camera app)
-  const params = new URLSearchParams(location.search);
-  const hinban = params.get('id');
-  if(hinban && !_cart.some(i => i.hinban === hinban)) {
+// ── QRパラメータ処理 ──
+function handleURLParams(){
+  var params = new URLSearchParams(location.search);
+  var hinban = params.get('id');
+  if(hinban && !_cart.some(function(i){ return i.hinban === hinban; })){
     _cart.push({
-      hinban,
+      hinban:   hinban,
       hinmei:   params.get('nm') || '',
       haba:     params.get('w')  || '',
       me:       params.get('g')  || '',
       konritsu: params.get('k')  || '',
       ito:      params.get('t')  || '',
-      qty: 1
+      qty:      1
     });
     saveCart();
   }
-  // Clean URL without reload so back-navigation works cleanly
+  // URLをクリーン（ブラウザ履歴を汚さない）
   if(location.search) history.replaceState(null, '', location.pathname);
-
-  if(_cart.length > 0) renderCart();
-  else showScreen('nodata');
 }
 
-/* ── SUBMIT ── */
-async function submitForm() {
-  if(_cart.length === 0) { showScreen('nodata'); return; }
-  const name = (document.getElementById('r-name').value||'').trim();
-  if(!name) {
-    const el = document.getElementById('r-name');
-    el.focus(); el.style.borderColor='var(--ruby)';
-    setTimeout(()=>el.style.borderColor='',1500); return;
+// ── 送信 ──
+function submitForm(){
+  if(_cart.length === 0){ showScreen('nodata'); return; }
+  var name = (document.getElementById('r-name').value||'').trim();
+  if(!name){
+    var el = document.getElementById('r-name');
+    el.focus();
+    el.style.borderColor='var(--red)';
+    setTimeout(function(){ el.style.borderColor=''; },1500);
+    return;
   }
-  const payload = {
-    items: _cart.map(i=>({hinban:i.hinban,hinmei:i.hinmei,haba:i.haba,me:i.me,konritsu:i.konritsu,ito:i.ito,qty:i.qty})),
-    name,
+  // qtyを最新に同期
+  document.querySelectorAll('.qty-num').forEach(function(inp, idx){
+    if(_cart[idx]) _cart[idx].qty = Math.max(1, parseInt(inp.value)||1);
+  });
+  saveCart();
+
+  var payload = {
+    name:    name,
     company: (document.getElementById('r-company').value||'').trim(),
     mobile:  (document.getElementById('r-tel').value||'').trim(),
     mail:    (document.getElementById('r-email').value||'').trim(),
     memo:    (document.getElementById('r-memo').value||'').trim(),
+    items:   _cart.map(function(i){
+      return {hinban:i.hinban, hinmei:i.hinmei, haba:i.haba,
+              me:i.me, konritsu:i.konritsu, ito:i.ito, qty:i.qty};
+    })
   };
+
   showScreen('sending');
-  try {
-    await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+
+  fetch(ENDPOINT, {
+    method: 'POST',
+    mode:   'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:   JSON.stringify(payload)
+  }).then(function(){
     showScreen('done');
-  } catch(e) {
-    document.getElementById('err-msg').textContent = e.message||'エラーが発生しました';
+  }).catch(function(e){
+    document.getElementById('err-msg').textContent = e.message || 'エラーが発生しました';
     showScreen('error');
-  }
+  });
 }
 
-function startNewSession() {
+function startNewSession(){
   _cart = [];
-   saveCart();
-  updateCartBadge();
-  // Clear form
-  ['r-name','r-company','r-tel','r-email','r-memo'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
+  saveCart();
+  updateBadge();
+  ['r-name','r-company','r-tel','r-email','r-memo'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
   });
   showScreen('nodata');
 }
 
-function goBackToCart() {
+function goBackToCart(){
   if(_cart.length > 0) renderCart();
   else showScreen('nodata');
 }
 
-/* ── SCANNER ── */
-
-/* ビープ音 */
-function beep() {
-  try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ac.createOscillator();
-    const g = ac.createGain();
-    o.connect(g); g.connect(ac.destination);
-    o.type = 'sine';
-    o.frequency.value = 1800;
-    g.gain.setValueAtTime(0.25, ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
-    o.start(ac.currentTime);
-    o.stop(ac.currentTime + 0.12);
-  } catch(e) {}
-}
-
-/* ── QR SCANNER ENGINE ── */
-
-async function loadQrScanner() {
-  if(_qrScannerLib) return _qrScannerLib;
-  try {
-    const mod = await import('https://unpkg.com/qr-scanner@1.4.2/qr-scanner.min.js');
-    _qrScannerLib = mod.default;
-    return _qrScannerLib;
-  } catch(e) {
-    return null;
-  }
-}
-
-function _onQRDecode(codeData) {
-  if(!_scanning || !codeData) return;
-  const now = Date.now();
-  if(codeData !== _lastCode || now - _lastCodeTime > 3000) {
-    _lastCode = codeData;
-    _lastCodeTime = now;
-    const added = addToCart(codeData);    if(added) {
-      beep();
-      if(navigator.vibrate) navigator.vibrate([60, 40, 60]);
-    }
-    setTimeout(() => {
-      if(_scanning) document.getElementById('scan-status').textContent = 'スキャン中...';
-    }, 1800);
-  }
-}
-
-async function openScanner() {
-  if(_scanning) return;
-  _scanning = true;
-
-  const overlay = document.getElementById('screen-scanner');
-  overlay.classList.add('open');
-  updateCartBadge();
-  const statusEl = document.getElementById('scan-status');
-  statusEl.textContent = 'カメラを起動しています...';
-  _lastCode = '';
-  _lastCodeTime = 0;
-
-  // Try qr-scanner (WASM ZXing on iOS, BarcodeDetector on Android)
-  const QrScanner = await loadQrScanner();
-
-  if(QrScanner) {
-    try {
-      if(_qrScanner) { try { _qrScanner.destroy(); } catch(e){} _qrScanner = null; }
-
-      const video = document.getElementById('scan-video');
-      _qrScanner = new QrScanner(
-        video,
-        result => _onQRDecode(typeof result === 'object' ? result.data : result),
-        {
-          preferredCamera: 'environment',
-          highlightScanRegion: false,
-          highlightCodeOutline: false,
-          returnDetailedScanResult: true,
-          maxScansPerSecond: 8,
-        }
-      );
-
-      await _qrScanner.start();
-      statusEl.textContent = 'スキャン中...';
-      return;
-
-    } catch(e) {
-      if(_qrScanner) { try { _qrScanner.destroy(); } catch(ex){} _qrScanner = null; }
-      // Fall through to jsQR
-    }
-  }
-
-  // Fallback: manual getUserMedia + jsQR
-  await _openScannerJsQR();
-}
-
-async function _openScannerJsQR() {
-  const video = document.getElementById('scan-video');
-  if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream=null; }
-  if(_raf) { cancelAnimationFrame(_raf); _raf=null; }
-  video.srcObject = null;
-
-  const constraintList = [
-    {video:{facingMode:{exact:'environment'},width:{ideal:1920},height:{ideal:1080}}},
-    {video:{facingMode:'environment',width:{ideal:1280}}},
-    {video:  {facingMode:'environment'}},
-    {video:{width:{ideal:1280}}},
-    {video:true}
-  ];
-
-  let gotStream = false;
-  for(const c of constraintList) {
-    try { _stream = await navigator.mediaDevices.getUserMedia(c); gotStream = true; break; }
-    catch(e) {}
-  }
-
-  if(!gotStream) {
-    document.getElementById('scan-status').textContent = 'カメラを起動できませんでした。ブラウザの許可設定をご確認ください。';
-    _scanning = false; return;
-  }
-
-  video.srcObject = _stream;
-  try { await video.play(); } catch(e) {}
-
-  await new Promise(r => {
-    const check = () => { if(video.videoWidth > 0 || video.readyState >=  2) r(); else setTimeout(check, 80); };
-    check();
-    setTimeout(r, 2500);
-  });
-
-  document.getElementById('scan-status').textContent = 'スキャン中... (jsQR)';
-  _scanTickJsQR();
-}
-
-function _scanTickJsQR() {
-  if(!_scanning || !_stream) return;
-  const video = document.getElementById('scan-video');
-  if(!video || video.videoWidth === 0) { if(_scanning) _raf = requestAnimationFrame(_scanTickJsQR); return; }
-
-  try {
-    const canvas = document.getElementById('scan-canvas');
-    const w = video.videoWidth, h = video.videoHeight;
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, w, h);
-    const imgData = ctx.getImageData(0, 0, w, h);
-    const result = jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'});
-    if(result) _onQRDecode(result.data);
-  } catch(e) {}
-
-  if(_scanning) _raf = requestAnimationFrame(_scanTickJsQR);
-}
-
-function closeScanner() {
-  _scanning = false;
-  if(_raf) { cancelAnimationFrame(_raf); _raf = null; }
-  if(_qrScanner) {
-    try { _qrScanner.stop(); _qrScanner.destroy(); } catch(e) {}
-    _qrScanner = null;
-  }
-  if(_stream) { _stream.getTracks().forEach(t=>t.stop()); _stream = null; }
-  const video = document.getElementById("scan-video");
-  if(video) video.srcObject = null;
-  document.getElementById("screen-scanner").classList.remove("open");
+// ── 初期化 ──
+(function init(){
+  loadCart();
+  handleURLParams();
   if(_cart.length > 0) renderCart();
-  else showScreen("nodata");
-}
-
-init();
-<\/script>
-<\/body>
-<\/html>
+  else showScreen('nodata');
+  updateBadge();
+})();
+</script>
+</body>
+</html>
