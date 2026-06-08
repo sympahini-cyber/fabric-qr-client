@@ -2,467 +2,176 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PICK LIST // Sample Request</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>生地サンプル リクエスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:     #080808;
-  --bg2:    #101010;
-  --bg3:    #181818;
-  --border: #2a2a2a;
-  --bord2:  #404040;
-  --text:   #d4d0c8;
-  --text2:  #8a8680;
-  --text3:  #555250;
-  --accent: #e8e4dc;
-  --red:    #c0392b;
-  --red2:   #8b2a20;
-  --green:  #5a7a50;
-  --mono:   'Courier New','Lucida Console',monospace;
-  --sans:   'Yu Gothic','YuGothic','Hiragino Kaku Gothic ProN',sans-serif;
+  --ink-0:#faf8f5;--ink-1:#f4f0ea;--ink-2:#ece7de;--ink-3:#e4ddd2;
+  --ink-4:#d0c8bc;--ink-5:#b8b0a4;--ink-6:#a09080;--ink-7:#8a8078;
+  --sand-1:#2c2824;--sand-2:#4a4038;--sand-3:#6a6058;--sand-4:#9a9088;
+  --gold:#7a6a5a;--gold-hi:#5a4a3a;--gold-lo:#9a8a7a;
+  --gold-10:rgba(90,74,58,.10);--gold-18:rgba(90,74,58,.18);
+  --gold-30:rgba(90,74,58,.30);
+  --ruby:#c0392b;--ruby-10:rgba(192,57,43,.10);--ruby-30:rgba(192,57,43,.30);
+  --sage:#4a7a60;--sage-10:rgba(74,122,96,.10);
+  --r:5px;--rl:10px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;}
-
-/* scanline */
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);}
-
-/* ── HEADER ── */
-#header{
-  position:sticky;top:0;z-index:100;
-  background:var(--bg2);border-bottom:1px solid var(--bord2);
-  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  min-height:100%;background:var(--ink-0);color:var(--sand-1);
+  font-family:'Inter','Helvetica Neue',Arial,'Hiragino Sans','Yu Gothic UI',sans-serif;
+  font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased;
 }
-.hdr-title{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--accent);}
-.hdr-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;margin-top:2px;}
-.hdr-badge{
-  font-family:var(--mono);font-size:11px;color:var(--bg);
-  background:var(--accent);padding:3px 10px;
-  letter-spacing:.05em;
-}
-.hdr-badge.empty{background:var(--bg3);color:var(--text3);border:1px solid var(--border);}
-
-/* ── SCREENS ── */
-.screen{display:none;min-height:calc(100vh - 54px);}
-.screen.active{display:block;}
-
-/* ── NODATA ── */
-#screen-nodata{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
-}
-.nd-icon{font-size:32px;margin-bottom:20px;opacity:.3;}
-.nd-title{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--text2);margin-bottom:8px;}
-.nd-desc{font-size:12px;color:var(--text3);line-height:1.7;}
-.nd-arrow{font-family:var(--mono);font-size:28px;color:var(--text3);margin:24px 0 8px;animation:bounce 1.8s ease-in-out infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
-
-/* ── CART SCREEN ── */
-#screen-cart{padding:16px;}
-.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--text3);
-  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-
-/* item card */
-.item-card{background:var(--bg2);border:1px solid var(--border);margin-bottom:8px;position:relative;}
-.item-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--bord2);}
-.item-top{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 12px 8px 14px;}
-.item-hinban{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent);}
-.item-hinmei{font-size:12px;color:var(--text2);margin-top:2px;}
-.item-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;}
-.item-del:active{color:var(--red);}
-.item-specs{padding:0 14px 8px;display:flex;flex-wrap:wrap;gap:4px;}
-.spec-tag{font-family:var(--mono);font-size:9px;color:var(--text3);
-  border:1px solid var(--border);padding:2px 6px;}
-.item-qty{display:flex;align-items:center;gap:8px;padding:8px 14px 12px;border-top:1px solid var(--border);}
-.qty-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;}
-.qty-ctrl{display:flex;align-items:center;gap:0;}
-.qty-btn{width:32px;height:32px;background:var(--bg3);border:1px solid var(--bord2);
-  color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.qty-btn:active{background:var(--bord2);}
-.qty-num{width:44px;text-align:center;background:var(--bg3);border-top:1px solid var(--bord2);
-  border-bottom:1px solid var(--bord2);border-left:none;border-right:none;
-  color:var(--accent);font-family:var(--mono);font-size:14px;height:32px;padding:0;}
-
-/* scan hint */
-.scan-hint{
-  background:var(--bg2);border:1px solid var(--border);
-  padding:12px 14px;margin-bottom:12px;
-  font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.06em;
-  display:flex;align-items:center;gap:8px;
-}
-.scan-hint-icon{font-size:16px;flex-shrink:0;}
-
-/* form */
-.form-section{margin-top:20px;}
-.form-group{margin-bottom:12px;}
-.form-group label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
-  color:var(--text3);margin-bottom:5px;}
-.form-group input,.form-group textarea{
-  width:100%;background:var(--bg3);border:1px solid var(--bord2);
-  color:var(--text);padding:10px 12px;font-family:var(--sans);font-size:14px;
-  outline:none;border-radius:0;transition:border-color .1s;
-  -webkit-appearance:none;
-}
-.form-group input:focus,.form-group textarea:focus{border-color:var(--text2);}
-.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
-.form-group textarea{resize:vertical;min-height:70px;}
-
-/* required */
-.req{color:var(--accent);margin-left:2px;}
-
-/* submit btn */
-.btn-submit{
-  width:100%;padding:16px;margin-top:8px;
-  background:var(--accent);color:var(--bg);
-  border:none;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
-  cursor:pointer;transition:background .1s;
-}
-.btn-submit:active{background:var(--text);}
-.btn-submit:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;}
-
-/* ── SENDING ── */
-#screen-sending{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
-}
-.spinner{width:32px;height:32px;border:2px solid var(--border);
-  border-top-color:var(--accent);border-radius:50%;
-  animation:spin .8s linear infinite;margin-bottom:20px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── DONE ── */
-#screen-done{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
-}
-.done-icon{font-family:var(--mono);font-size:36px;color:var(--green);margin-bottom:16px;}
-.done-title{font-family:var(--mono);font-size:13px;letter-spacing:.15em;color:var(--accent);margin-bottom:8px;}
-.done-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:28px;}
-.btn-secondary{
-  display:inline-block;padding:12px 24px;
-  background:transparent;border:1px solid var(--bord2);
-  color:var(--text2);font-family:var(--mono);font-size:10px;
-  letter-spacing:.1em;cursor:pointer;
-}
-.btn-secondary:active{background:var(--bg3);}
-
-/* ── ERROR ── */
-#screen-error{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:calc(100vh - 54px);padding:40px 24px;text-align:center;
-}
-.err-icon{font-family:var(--mono);font-size:28px;color:var(--red);margin-bottom:16px;}
-.err-msg{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:24px;word-break:break-all;}
-
-/* ── NO-ENDPOINT WARN ── */
-.endpoint-warn{
-  background:var(--bg2);border:1px solid var(--red2);
-  padding:10px 12px;margin-bottom:12px;
-  font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.06em;
-  display:none;
-}
-
-/* bottom padding for scrolling */
-.bottom-pad{height:40px;}
+body{padding:0 0 60px}
+.hdr{position:sticky;top:0;z-index:10;background:var(--ink-1);border-bottom:1px solid var(--ink-4);padding:16px 20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(8px);}
+.hdr-logo{display:flex;align-items:center;gap:10px}
+.hdr-brand{font-size:12px;font-weight:300;letter-spacing:.28em}
+.hdr-brand em{font-style:normal;color:var(--gold);font-weight:600}
+.hdr-sub{font-size:8px;letter-spacing:.22em;color:var(--ink-7);text-transform:uppercase;margin-top:1px}
+.wrap{max-width:480px;margin:0 auto;padding:24px 20px}
+.fabric-card{background:var(--ink-2);border:1px solid var(--ink-4);border-radius:var(--rl);padding:20px;margin-bottom:24px;position:relative;overflow:hidden;}
+.fabric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold-lo),var(--gold),var(--gold-lo));}
+.fabric-code{font-family:'SF Mono','Fira Code','Consolas',monospace;color:var(--gold);font-size:18px;font-weight:500;letter-spacing:.05em;margin-bottom:4px;}
+.fabric-name{font-size:13px;color:var(--sand-2);margin-bottom:14px}
+.fabric-specs{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+.spec-lbl{font-size:9.5px;font-weight:600;letter-spacing:.16em;color:var(--ink-7);text-transform:uppercase;margin-bottom:2px}
+.spec-val{font-size:12.5px;color:var(--sand-1)}
+.section-ttl{font-size:9px;font-weight:600;letter-spacing:.22em;color:var(--ink-7);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-ttl::after{content:'';flex:1;height:1px;background:var(--ink-4)}
+.inp-row{margin-bottom:14px}
+.inp-lbl{display:block;font-size:10px;font-weight:600;letter-spacing:.16em;color:var(--sand-3);text-transform:uppercase;margin-bottom:7px;}
+.inp-lbl .req{color:var(--ruby);margin-left:2px}
+.inp{width:100%;background:var(--ink-3);border:1px solid var(--ink-5);border-radius:var(--r);color:var(--sand-1);font-size:14px;font-family:inherit;padding:10px 14px;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;}
+.inp:focus{border-color:var(--gold-30);box-shadow:0 0 0 3px var(--gold-10)}
+.inp::placeholder{color:var(--ink-7)}
+textarea.inp{resize:vertical;min-height:80px}
+.btn-submit{display:block;width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-hi) 0%,var(--gold) 100%);color:#faf8f5;font-size:14px;font-weight:600;letter-spacing:.08em;border:none;border-radius:var(--r);cursor:pointer;font-family:inherit;box-shadow:0 2px 16px rgba(200,168,74,.30);transition:all .15s;margin-top:8px;}
+.btn-submit:hover{box-shadow:0 4px 22px rgba(200,168,74,.45);transform:translateY(-1px);}
+.btn-submit:active{transform:translateY(0)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+#screen-form{display:block}
+#screen-sending,#screen-done,#screen-error,#screen-nodata{display:none;text-align:center;padding:60px 20px}
+.state-ic{font-size:44px;margin-bottom:18px}
+.state-ttl{font-size:18px;font-weight:300;letter-spacing:.04em;margin-bottom:10px}
+.state-sub{font-size:13px;color:var(--sand-3)}
+.spinner{width:36px;height:36px;border:2px solid var(--ink-5);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.banner-warn{background:var(--ink-2);border:1px solid var(--gold-30);border-radius:var(--rl);padding:16px 18px;margin-bottom:20px;font-size:12.5px;color:var(--sand-3);display:flex;gap:12px;align-items:flex-start;}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--ink-5);border-radius:2px}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<div id="header">
-  <div>
-    <div class="hdr-title">PICK LIST</div>
-    <div class="hdr-sub">// Sample Request</div>
-  </div>
-  <div class="hdr-badge empty" id="hdr-badge">0 件</div>
-</div>
-
-<!-- NODATA -->
-<div id="screen-nodata" class="screen active">
-  <div class="nd-icon">□</div>
-  <div class="nd-title">リストは空です</div>
-  <div class="nd-desc">
-    スマホのカメラアプリで<br>QRコードを読み取ると<br>自動でリストに追加されます
-  </div>
-  <div class="nd-arrow">↓</div>
-  <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;">
-    読み取るたびに追加されます
+<script>const ENDPOINT = '';</script>
+<div class="hdr">
+  <div class="hdr-logo">
+    <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+      <polygon points="17,3 31,17 17,31 3,17" stroke="#C8A84A" stroke-width="1.2" fill="none"/>
+      <polygon points="17,9 25,17 17,25 9,17" fill="#C8A84A" fill-opacity="0.18"/>
+      <polygon points="17,13 21,17 17,21 13,17" fill="#C8A84A" fill-opacity="0.55"/>
+    </svg>
+    <div>
+      <div class="hdr-brand">FABRIC<em>QR</em></div>
+      <div class="hdr-sub">Sample Request</div>
+    </div>
   </div>
 </div>
-
-<!-- CART -->
-<div id="screen-cart" class="screen" style="display:none;">
-  <div style="padding:16px 16px 0;">
-    <div class="scan-hint">
-      <span class="scan-hint-icon">📷</span>
-      カメラでQRを読み取ると続けて追加できます
-    </div>
-    <div class="endpoint-warn" id="endpoint-warn">
-      ⚠ エンドポイントURLが未設定のため送信できません
-    </div>
-    <div class="section-label">// リスト</div>
-    <div id="cart-items"></div>
+<div class="wrap">
+  <div id="screen-nodata">
+    <div class="state-ic" style="color:var(--ink-6)">&#x22A0;</div>
+    <div class="state-ttl">QRコードから開いてください</div>
+    <div class="state-sub">このページはQRコードを読み込むと<br>生地情報が表示されます</div>
   </div>
-
-  <div class="form-section" style="padding:0 16px;">
-    <div class="section-label">// 送信者情報</div>
-    <div class="form-group">
-      <label>氏名<span class="req">*</span></label>
-      <input type="text" id="r-name" placeholder="山田 太郎" autocomplete="name">
+  <div id="screen-form">
+    <div class="fabric-card" id="fabric-info">
+      <div class="fabric-code" id="f-hinban">---</div>
+      <div class="fabric-name" id="f-hinmei"></div>
+      <div class="fabric-specs" id="f-specs"></div>
     </div>
-    <div class="form-group">
-      <label>会社名</label>
-      <input type="text" id="r-company" placeholder="株式会社〇〇" autocomplete="organization">
+    <div class="banner-warn" id="no-endpoint-warn" style="display:none">
+      <span style="color:var(--gold);font-size:16px">&#x26A0;</span>
+      <div>このページにエンドポイントURLが設定されていません。<br>送信先が未設定のため送信できません。</div>
     </div>
-    <div class="form-group">
-      <label>Mobile</label>
-      <input type="tel" id="r-tel" placeholder="090-0000-0000" autocomplete="tel">
+    <div class="section-ttl">お客様情報</div>
+    <div class="inp-row">
+      <label class="inp-lbl">お名前 <span class="req">*</span></label>
+      <input type="text" class="inp" id="r-name" placeholder="山田 太郎" autocomplete="name">
     </div>
-    <div class="form-group">
-      <label>mail</label>
-      <input type="email" id="r-email" placeholder="example@mail.com" autocomplete="email">
+    <div class="inp-row">
+      <label class="inp-lbl">会社名</label>
+      <input type="text" class="inp" id="r-company" placeholder="株式会社〇〇" autocomplete="organization">
     </div>
-    <div class="form-group">
-      <label>備考</label>
-      <textarea id="r-memo" placeholder="任意"></textarea>
+    <div class="inp-row">
+      <label class="inp-lbl">電話番号</label>
+      <input type="tel" class="inp" id="r-tel" placeholder="03-0000-0000" autocomplete="tel">
     </div>
-    <button class="btn-submit" id="btn-submit" onclick="submitForm()">
-      送　信　す　る
-    </button>
-    <div class="bottom-pad"></div>
+    <div class="inp-row">
+      <label class="inp-lbl">メールアドレス</label>
+      <input type="email" class="inp" id="r-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="section-ttl" style="margin-top:22px">リクエスト内容</div>
+    <div class="inp-row">
+      <label class="inp-lbl">数量（m） <span class="req">*</span></label>
+      <input type="number" class="inp" id="r-qty" min="0.1" step="0.1" placeholder="1.0">
+    </div>
+    <div class="inp-row">
+      <label class="inp-lbl">メモ・備考</label>
+      <textarea class="inp" id="r-memo" placeholder="ご要望やカラー等の補足情報をご記入ください"></textarea>
+    </div>
+    <div class="inp-row" style="color:var(--sand-4);font-size:11px;margin-bottom:20px">
+      <span class="req">*</span> は必須項目です
+    </div>
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">送信する</button>
+  </div>
+  <div id="screen-sending">
+    <div class="spinner"></div>
+    <div class="state-ttl">送信中...</div>
+    <div class="state-sub">しばらくお待ちください</div>
+  </div>
+  <div id="screen-done">
+    <div class="state-ic" style="color:var(--sage)">&#x2713;</div>
+    <div class="state-ttl">送信しました</div>
+    <div class="state-sub">リクエストを受け付けました。<br>担当者よりご連絡いたします。</div>
+  </div>
+  <div id="screen-error">
+    <div class="state-ic" style="color:var(--ruby)">&#x2715;</div>
+    <div class="state-ttl">送信に失敗しました</div>
+    <div class="state-sub" id="err-msg">もう一度お試しください</div>
+    <button onclick="showScreen('form')" style="margin-top:24px;padding:10px 24px;background:var(--ink-2);color:var(--sand-1);border:1px solid var(--ink-4);border-radius:var(--r);font-size:13px;cursor:pointer;font-family:inherit">戻る</button>
   </div>
 </div>
-
-<!-- SENDING -->
-<div id="screen-sending" class="screen" style="display:none;">
-  <div class="spinner"></div>
-  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;">送信中...</div>
-</div>
-
-<!-- DONE -->
-<div id="screen-done" class="screen" style="display:none;">
-  <div class="done-icon">✓</div>
-  <div class="done-title">送信完了</div>
-  <div class="done-desc">
-    リクエストを受け付けました。<br>担当者よりご連絡いたします。
-  </div>
-  <button class="btn-secondary" onclick="startNewSession()">新しいリストをスキャン</button>
-</div>
-
-<!-- ERROR -->
-<div id="screen-error" class="screen" style="display:none;">
-  <div class="err-icon">✕</div>
-  <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:8px;letter-spacing:.08em;">送信に失敗しました</div>
-  <div class="err-msg" id="err-msg"></div>
-  <button class="btn-secondary" onclick="goBackToCart()">戻る</button>
-</div>
-
 <script>
 'use strict';
-
-// GASエンドポイント（変更する場合はここを書き換えるか localStorage の 'pl_endpoint' に設定）
-var DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
-var ENDPOINT = (function(){
-  try{ return localStorage.getItem('pl_endpoint') || DEFAULT_ENDPOINT; }catch(e){ return DEFAULT_ENDPOINT; }
-})();
-
-var _cart = [];
-
-// ── ユーティリティ ──
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function saveCart(){
-  try{ localStorage.setItem('_fc_cart', JSON.stringify(_cart)); }catch(e){}
+const params = new URLSearchParams(location.search);
+const fabric = {hinban:params.get('id')||'',hinmei:params.get('nm')||'',haba:params.get('w')||'',me:params.get('g')||'',konritsu:params.get('k')||'',ito:params.get('t')||''};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function showScreen(name){['form','sending','done','error','nodata'].forEach(s=>{document.getElementById('screen-'+s).style.display=s===name?'block':'none';});}
+function init(){
+  if(!fabric.hinban){showScreen('nodata');return;}
+  document.getElementById('f-hinban').textContent=fabric.hinban;
+  document.getElementById('f-hinmei').textContent=fabric.hinmei||'';
+  const specs=[];
+  if(fabric.haba)specs.push(['生地巾',fabric.haba]);
+  if(fabric.me)specs.push(['目付',fabric.me]);
+  if(fabric.konritsu)specs.push(['混率',fabric.konritsu]);
+  if(fabric.ito)specs.push(['使用糸',fabric.ito]);
+  document.getElementById('f-specs').innerHTML=specs.map(([l,v])=>'<div class="spec-item"><div class="spec-lbl">'+esc(l)+'</div><div class="spec-val">'+esc(v)+'</div></div>').join('');
+  if(!ENDPOINT){document.getElementById('no-endpoint-warn').style.display='flex';document.getElementById('btn-submit').disabled=true;}
+  showScreen('form');
 }
-
-function loadCart(){
-  try{
-    var saved = JSON.parse(localStorage.getItem('_fc_cart') || '[]');
-    if(Array.isArray(saved)) _cart = saved;
-  }catch(e){ _cart = []; }
-}
-
-// ── 画面切替 ──
-function showScreen(name){
-  // inline styleで制御（IDセレクタのdisplay:flexがclass指定より優先されるため）
-  var flex = {nodata:true, sending:true, done:true, error:true};
-  var screens = ['nodata','cart','sending','done','error'];
-  screens.forEach(function(s){
-    var el = document.getElementById('screen-'+s);
-    if(!el) return;
-    if(s === name){
-      el.style.display = flex[s] ? 'flex' : 'block';
-    } else {
-      el.style.display = 'none';
-    }
-  });
-}
-
-function updateBadge(){
-  var el = document.getElementById('hdr-badge');
-  if(!el) return;
-  var n = _cart.length;
-  el.textContent = n + ' 件';
-  el.className = 'hdr-badge' + (n > 0 ? '' : ' empty');
-}
-
-// ── カートレンダリング ──
-function renderCart(){
-  if(_cart.length === 0){ showScreen('nodata'); updateBadge(); return; }
-
-  var container = document.getElementById('cart-items');
-  container.innerHTML = _cart.map(function(item, idx){
-    var specs = [];
-    if(item.haba)     specs.push(['生地巾', item.haba]);
-    if(item.me)       specs.push(['目　付', item.me]);
-    if(item.konritsu) specs.push(['混　率', item.konritsu]);
-    if(item.ito)      specs.push(['使用糸', item.ito]);
-    var specHtml = specs.length
-      ? specs.map(function(s){ return '<span class="spec-tag">'+esc(s[0])+' : '+esc(s[1])+'</span>'; }).join('')
-      : '';
-    return '<div class="item-card">'
-      +'<div class="item-top">'
-        +'<div>'
-          +'<div class="item-hinban">'+esc(item.hinban)+'</div>'
-          +(item.hinmei ? '<div class="item-hinmei">'+esc(item.hinmei)+'</div>' : '')
-        +'</div>'
-        +'<button class="item-del" onclick="removeItem('+idx+')">✕</button>'
-      +'</div>'
-      +(specHtml ? '<div class="item-specs">'+specHtml+'</div>' : '')
-      +'<div class="item-qty">'
-        +'<span class="qty-label">数　量</span>'
-        +'<div class="qty-ctrl">'
-          +'<button class="qty-btn" onclick="changeQty('+idx+',-1)">－</button>'
-          +'<input class="qty-num" type="number" min="1" value="'+item.qty+'" onchange="setQty('+idx+',this.value)" inputmode="numeric">'
-          +'<button class="qty-btn" onclick="changeQty('+idx+',1)">＋</button>'
-        +'</div>'
-        +'<span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:4px;">部</span>'
-      +'</div>'
-      +'</div>';
-  }).join('');
-
-  // エンドポイント警告
-  var warn = document.getElementById('endpoint-warn');
-  var btn  = document.getElementById('btn-submit');
-  if(!ENDPOINT){
-    if(warn) warn.style.display='block';
-    if(btn)  btn.disabled=true;
-  } else {
-    if(warn) warn.style.display='none';
-    if(btn)  btn.disabled=false;
-  }
-
-  showScreen('cart');
-  updateBadge();
-}
-
-function removeItem(idx){
-  _cart.splice(idx,1);
-  saveCart();
-  if(_cart.length === 0){ showScreen('nodata'); updateBadge(); return; }
-  renderCart();
-}
-
-function changeQty(idx, delta){
-  _cart[idx].qty = Math.max(1, (_cart[idx].qty||1) + delta);
-  saveCart();
-  renderCart();
-}
-
-function setQty(idx, val){
-  _cart[idx].qty = Math.max(1, parseInt(val)||1);
-  saveCart();
-}
-
-// ── QRパラメータ処理 ──
-function handleURLParams(){
-  var params = new URLSearchParams(location.search);
-  var hinban = params.get('id');
-  if(hinban && !_cart.some(function(i){ return i.hinban === hinban; })){
-    _cart.push({
-      hinban:   hinban,
-      hinmei:   params.get('nm') || '',
-      haba:     params.get('w')  || '',
-      me:       params.get('g')  || '',
-      konritsu: params.get('k')  || '',
-      ito:      params.get('t')  || '',
-      qty:      1
-    });
-    saveCart();
-  }
-  // URLをクリーン（ブラウザ履歴を汚さない）
-  if(location.search) history.replaceState(null, '', location.pathname);
-}
-
-// ── 送信 ──
-function submitForm(){
-  if(_cart.length === 0){ showScreen('nodata'); return; }
-  var name = (document.getElementById('r-name').value||'').trim();
-  if(!name){
-    var el = document.getElementById('r-name');
-    el.focus();
-    el.style.borderColor='var(--red)';
-    setTimeout(function(){ el.style.borderColor=''; },1500);
-    return;
-  }
-  // qtyを最新に同期
-  document.querySelectorAll('.qty-num').forEach(function(inp, idx){
-    if(_cart[idx]) _cart[idx].qty = Math.max(1, parseInt(inp.value)||1);
-  });
-  saveCart();
-
-  var payload = {
-    name:    name,
-    company: (document.getElementById('r-company').value||'').trim(),
-    mobile:  (document.getElementById('r-tel').value||'').trim(),
-    mail:    (document.getElementById('r-email').value||'').trim(),
-    memo:    (document.getElementById('r-memo').value||'').trim(),
-    items:   _cart.map(function(i){
-      return {hinban:i.hinban, hinmei:i.hinmei, haba:i.haba,
-              me:i.me, konritsu:i.konritsu, ito:i.ito, qty:i.qty};
-    })
-  };
-
+async function submitForm(){
+  const name=(document.getElementById('r-name').value||'').trim();
+  const qty=parseFloat(document.getElementById('r-qty').value)||0;
+  if(!name){document.getElementById('r-name').focus();document.getElementById('r-name').style.borderColor='var(--ruby)';setTimeout(()=>document.getElementById('r-name').style.borderColor='',1500);return;}
+  if(!qty||qty<=0){document.getElementById('r-qty').focus();document.getElementById('r-qty').style.borderColor='var(--ruby)';setTimeout(()=>document.getElementById('r-qty').style.borderColor='',1500);return;}
+  const payload={hinban:fabric.hinban,hinmei:fabric.hinmei,haba:fabric.haba,me:fabric.me,konritsu:fabric.konritsu,ito:fabric.ito,name,company:(document.getElementById('r-company').value||'').trim(),tel:(document.getElementById('r-tel').value||'').trim(),email:(document.getElementById('r-email').value||'').trim(),qty,memo:(document.getElementById('r-memo').value||'').trim()};
   showScreen('sending');
-
-  fetch(ENDPOINT, {
-    method: 'POST',
-    mode:   'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:   JSON.stringify(payload)
-  }).then(function(){
-    showScreen('done');
-  }).catch(function(e){
-    document.getElementById('err-msg').textContent = e.message || 'エラーが発生しました';
-    showScreen('error');
-  });
+  try{await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});showScreen('done');}
+  catch(e){document.getElementById('err-msg').textContent=e.message||'ネットワークエラーが発生しました';showScreen('error');}
 }
-
-function startNewSession(){
-  _cart = [];
-  saveCart();
-  updateBadge();
-  ['r-name','r-company','r-tel','r-email','r-memo'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.value = '';
-  });
-  showScreen('nodata');
-}
-
-function goBackToCart(){
-  if(_cart.length > 0) renderCart();
-  else showScreen('nodata');
-}
-
-// ── 初期化 ──
-(function init(){
-  loadCart();
-  handleURLParams();
-  if(_cart.length > 0) renderCart();
-  else showScreen('nodata');
-  updateBadge();
-})();
+init();
 </script>
 </body>
 </html>
