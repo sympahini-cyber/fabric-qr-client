@@ -4,161 +4,256 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>生地サンプル リクエスト</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Share+Tech&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0c0a;--bg1:#131210;--bg2:#1a1815;--bg3:#222018;
-  --line:#2e2b24;--line2:#3d3a30;
-  --txt:#e8e4d8;--txt2:#b8b4a8;--txt3:#787468;
-  --gold:#c8a84a;--gold-d:#8a7030;--gold-lo:#c8a84a33;
-  --red:#c0392b;--red-lo:#c0392b22;
-  --green:#4a8a60;
+  --bg:#faf8f5;--bg1:#f4f0ea;--bg2:#ece7de;--bg3:#e4ddd2;
+  --line:#d0c8bc;--line2:#c0b8ac;
+  --txt:#2c2824;--txt2:#4a4038;--txt3:#9a9088;
+  --gold:#7a6a5a;--gold-d:#5a4a3a;--gold-lo:#7a6a5a22;
+  --red:#c0392b;--green:#4a7a60;
   --r:0px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;background:var(--bg);color:var(--txt);
-  font-family:'Share Tech Mono','Courier New',monospace;
+  font-family:'Inter','Helvetica Neue',Arial,sans-serif;
   font-size:13px;line-height:1.7;-webkit-font-smoothing:antialiased;
 }
-body{padding:0 0 60px;position:relative;overflow-x:hidden}
-body::after{content:'';pointer-events:none;position:fixed;inset:0;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);}
-.corner-tl,.corner-tr,.corner-bl,.corner-br{position:fixed;width:18px;height:18px;z-index:100;opacity:.4;}
+body{padding:0 0 60px;position:relative}
+
+/* corner marks */
+.corner-tl,.corner-tr,.corner-bl,.corner-br{
+  position:fixed;width:14px;height:14px;z-index:100;opacity:.35;
+}
 .corner-tl{top:10px;left:10px;border-top:1px solid var(--gold);border-left:1px solid var(--gold)}
 .corner-tr{top:10px;right:10px;border-top:1px solid var(--gold);border-right:1px solid var(--gold)}
 .corner-bl{bottom:10px;left:10px;border-bottom:1px solid var(--gold);border-left:1px solid var(--gold)}
 .corner-br{bottom:10px;right:10px;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold)}
-.hdr{position:sticky;top:0;z-index:50;background:var(--bg1);border-bottom:1px solid var(--line2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
-.hdr::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5;}
+
+/* Header */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg1);border-bottom:1px solid var(--line);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hdr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.4;
+}
 .hdr-left{display:flex;align-items:center;gap:14px}
-.hdr-mark{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold-d);position:relative;}
-.hdr-mark::before{content:'';position:absolute;width:14px;height:14px;border:1px solid var(--gold);transform:rotate(45deg);}
-.hdr-title{font-size:11px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;}
-.hdr-sub{font-size:9px;letter-spacing:.2em;color:var(--txt3);margin-top:2px}
-.hdr-id{font-size:9px;letter-spacing:.12em;color:var(--txt3)}
+.hdr-mark{
+  width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line2);position:relative;flex-shrink:0;
+}
+.hdr-mark::before{
+  content:'';position:absolute;
+  width:12px;height:12px;
+  border:1px solid var(--gold);
+  transform:rotate(45deg);
+}
+.hdr-title{font-size:10px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase;font-family:'Share Tech Mono',monospace;}
+.hdr-sub{font-size:8px;letter-spacing:.2em;color:var(--txt3);margin-top:2px;font-family:'Share Tech Mono',monospace;}
+.hdr-id{font-size:9px;letter-spacing:.1em;color:var(--txt3);font-family:'Share Tech Mono',monospace;}
+
 .wrap{max-width:460px;margin:0 auto;padding:28px 20px}
-.div-lbl{font-size:9px;letter-spacing:.28em;color:var(--txt3);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.div-lbl::before{content:'\25B8';color:var(--gold);font-size:8px}
-.div-lbl::after{content:'';flex:1;height:1px;background:var(--line2)}
-.fabric-card{background:var(--bg2);border:1px solid var(--line2);padding:18px 20px;margin-bottom:28px;position:relative;}
-.fabric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold-d),var(--gold),var(--gold-d));}
-.fabric-card::after{content:'SPECIMEN';position:absolute;top:10px;right:14px;font-size:8px;letter-spacing:.25em;color:var(--txt3);opacity:.5;}
-.fabric-code{color:var(--gold);font-size:20px;letter-spacing:.08em;font-weight:normal;margin-bottom:2px;}
-.fabric-name{font-size:11px;color:var(--txt2);margin-bottom:16px;letter-spacing:.05em}
-.fabric-specs{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;border-top:1px solid var(--line);padding-top:14px;}
-.spec-lbl{font-size:8px;letter-spacing:.22em;color:var(--txt3);text-transform:uppercase;margin-bottom:3px}
+
+/* Divider */
+.div-lbl{
+  font-size:8px;letter-spacing:.28em;color:var(--txt3);text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:12px;
+  font-family:'Share Tech Mono',monospace;
+}
+.div-lbl::before{content:'▸';color:var(--gold);font-size:8px}
+.div-lbl::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* Fabric card */
+.fabric-card{
+  background:var(--bg2);border:1px solid var(--line);
+  padding:18px 20px;margin-bottom:28px;position:relative;
+}
+.fabric-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.6;
+}
+.fabric-card::after{
+  content:'SPECIMEN';position:absolute;top:10px;right:14px;
+  font-size:8px;letter-spacing:.25em;color:var(--txt3);opacity:.5;
+  font-family:'Share Tech Mono',monospace;
+}
+.fabric-code{
+  color:var(--gold);font-size:19px;letter-spacing:.06em;
+  margin-bottom:3px;font-family:'Share Tech Mono',monospace;
+}
+.fabric-name{font-size:12px;color:var(--txt2);margin-bottom:16px;}
+.fabric-specs{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;
+  border-top:1px solid var(--line);padding-top:14px;
+}
+.spec-lbl{font-size:8px;letter-spacing:.2em;color:var(--txt3);text-transform:uppercase;margin-bottom:3px;font-family:'Share Tech Mono',monospace;}
 .spec-val{font-size:12px;color:var(--txt)}
-.inp-row{margin-bottom:14px;position:relative}
-.inp-lbl{display:block;font-size:8px;letter-spacing:.22em;color:var(--txt3);text-transform:uppercase;margin-bottom:7px;}
+
+/* Form */
+.inp-row{margin-bottom:14px}
+.inp-lbl{display:block;font-size:8px;letter-spacing:.2em;color:var(--txt3);text-transform:uppercase;margin-bottom:7px;}
 .inp-lbl .req{color:var(--red);margin-left:3px}
-.inp{width:100%;background:var(--bg2);border:none;border-bottom:1px solid var(--line2);color:var(--txt);font-size:13px;font-family:inherit;padding:8px 0;outline:none;transition:border-color .15s;border-radius:0;-webkit-appearance:none;appearance:none;}
+.inp{
+  width:100%;background:transparent;
+  border:none;border-bottom:1px solid var(--line2);
+  color:var(--txt);font-size:13px;font-family:inherit;
+  padding:8px 0;outline:none;transition:border-color .15s;
+  border-radius:0;-webkit-appearance:none;appearance:none;
+}
 .inp:focus{border-bottom-color:var(--gold)}
 .inp::placeholder{color:var(--txt3)}
-textarea.inp{border:1px solid var(--line2);padding:8px 10px;resize:vertical;min-height:72px;background:var(--bg2);}
+textarea.inp{
+  border:1px solid var(--line2);padding:8px 10px;background:var(--bg2);
+  resize:vertical;min-height:72px;
+}
 textarea.inp:focus{border-color:var(--gold)}
-.btn-submit{display:block;width:100%;padding:13px 0;background:transparent;border:1px solid var(--gold-d);color:var(--gold);font-size:11px;font-family:inherit;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;margin-top:10px;}
-.btn-submit::before{content:'';position:absolute;inset:0;background:var(--gold);opacity:0;transition:opacity .2s;}
-.btn-submit:hover{color:var(--bg);letter-spacing:.4em}
+
+/* Submit */
+.btn-submit{
+  display:block;width:100%;padding:13px 0;
+  background:transparent;border:1px solid var(--line2);
+  color:var(--gold);font-size:10px;font-family:'Share Tech Mono',monospace;
+  letter-spacing:.35em;text-transform:uppercase;cursor:pointer;
+  position:relative;overflow:hidden;transition:all .2s;margin-top:10px;
+}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:var(--gold);opacity:0;transition:opacity .2s;
+}
+.btn-submit:hover{color:var(--bg);border-color:var(--gold)}
 .btn-submit:hover::before{opacity:1}
 .btn-submit span{position:relative;z-index:1}
-.btn-submit:active{transform:scale(.98)}
-.btn-submit:disabled{opacity:.3;cursor:not-allowed;letter-spacing:.35em}
+.btn-submit:active{transform:scale(.99)}
+.btn-submit:disabled{opacity:.35;cursor:not-allowed}
 .btn-submit:disabled::before{opacity:0}
+
+/* States */
 #screen-form{display:block}
 #screen-sending,#screen-done,#screen-error,#screen-nodata{display:none;text-align:center;padding:70px 20px;}
-.state-ic{width:48px;height:48px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line2);font-size:22px;}
-.state-ttl{font-size:15px;letter-spacing:.1em;margin-bottom:10px;color:var(--txt)}
-.state-sub{font-size:11px;color:var(--txt3);letter-spacing:.05em;line-height:1.9}
-.spinner{width:32px;height:32px;border:1px solid var(--line2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 20px;}
+.state-ic{
+  width:44px;height:44px;margin:0 auto 22px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);font-size:20px;
+}
+.state-ttl{font-size:14px;letter-spacing:.1em;margin-bottom:10px;color:var(--txt);font-family:'Share Tech Mono',monospace;}
+.state-sub{font-size:11px;color:var(--txt3);line-height:2}
+
+.spinner{width:30px;height:30px;border:1px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 20px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .cursor{animation:blink 1s step-end infinite}
-.banner-warn{background:var(--bg2);border:1px solid var(--gold-d);padding:14px 16px;margin-bottom:20px;font-size:11px;color:var(--txt2);display:flex;gap:12px;align-items:flex-start;letter-spacing:.03em;}
-.banner-warn-ic{color:var(--gold);flex-shrink:0;margin-top:1px}
-.req-note{font-size:9px;color:var(--txt3);letter-spacing:.1em;margin-bottom:20px}
+
+.banner-warn{background:var(--bg2);border:1px solid var(--line2);padding:13px 16px;margin-bottom:20px;font-size:11px;color:var(--txt2);display:flex;gap:12px;align-items:flex-start;}
+.banner-warn-ic{color:var(--gold);flex-shrink:0}
+.req-note{font-size:8px;color:var(--txt3);letter-spacing:.1em;margin-bottom:20px;font-family:'Share Tech Mono',monospace;}
+
 ::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:var(--line2)}
+::-webkit-scrollbar-thumb{background:var(--line)}
 </style>
 </head>
 <body>
+
 <script>
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
 </script>
-<div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+
+<div class="corner-tl"></div><div class="corner-tr"></div>
+<div class="corner-bl"></div><div class="corner-br"></div>
+
 <div class="hdr">
   <div class="hdr-left">
     <div class="hdr-mark"></div>
     <div>
-      <div class="hdr-title">Fabric<span style="color:var(--txt3)">QR</span></div>
+      <div class="hdr-title">FabricQR</div>
       <div class="hdr-sub">Sample Request System</div>
     </div>
   </div>
-  <div class="hdr-id" id="hdr-id">&#x2014; &#x2014; &#x2014;</div>
+  <div class="hdr-id" id="hdr-id">— — —</div>
 </div>
+
 <div class="wrap">
+
   <div id="screen-nodata">
-    <div class="state-ic" style="border-color:var(--line2);color:var(--txt3)">&#x2715;</div>
+    <div class="state-ic" style="color:var(--txt3)">✕</div>
     <div class="state-ttl">No Data</div>
-    <div class="state-sub">QR&#x30B3;&#x30FC;&#x30C9;&#x3092;&#x8AAD;&#x307F;&#x53D6;&#x3063;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;<br><span style="color:var(--txt3)">Scan QR code to load fabric data</span></div>
+    <div class="state-sub">QRコードを読み取ってください<br>Scan QR code to load fabric data</div>
   </div>
+
   <div id="screen-form">
     <div class="fabric-card" id="fabric-info">
-      <div class="fabric-code" id="f-hinban">&#x2014;&#x2014;&#x2014;</div>
+      <div class="fabric-code" id="f-hinban">———</div>
       <div class="fabric-name" id="f-hinmei"></div>
       <div class="fabric-specs" id="f-specs"></div>
     </div>
+
     <div class="banner-warn" id="no-endpoint-warn" style="display:none">
       <span class="banner-warn-ic">!</span>
-      <div>&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;URL&#x304C;&#x672A;&#x8A2D;&#x5B9A;&#x3067;&#x3059;&#x3002;&#x9001;&#x4FE1;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;</div>
+      <div>エンドポイントURLが未設定です。送信できません。</div>
     </div>
+
     <div class="div-lbl">Client Info</div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x304A;&#x540D;&#x524D;<span class="req">*</span></label>
-      <input type="text" class="inp" id="r-name" placeholder="&#x5C71;&#x7530; &#x592A;&#x90CE;" autocomplete="name">
+      <label class="inp-lbl">お名前<span class="req">*</span></label>
+      <input type="text" class="inp" id="r-name" placeholder="山田 太郎" autocomplete="name">
     </div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x4F1A;&#x793E;&#x540D;</label>
-      <input type="text" class="inp" id="r-company" placeholder="&#x682A;&#x5F0F;&#x4F1A;&#x793E;&#x300C;&#x300D;" autocomplete="organization">
+      <label class="inp-lbl">会社名</label>
+      <input type="text" class="inp" id="r-company" placeholder="株式会社〇〇" autocomplete="organization">
     </div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x96FB;&#x8A71;&#x756A;&#x53F7;</label>
+      <label class="inp-lbl">電話番号</label>
       <input type="tel" class="inp" id="r-tel" placeholder="03-0000-0000" autocomplete="tel">
     </div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x30E1;&#x30FC;&#x30EB;&#x30A2;&#x30C9;&#x30EC;&#x30B9;</label>
+      <label class="inp-lbl">メールアドレス</label>
       <input type="email" class="inp" id="r-email" placeholder="your@email.com" autocomplete="email">
     </div>
+
     <div class="div-lbl" style="margin-top:24px">Request</div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x6570;&#x91CF;&#xFF08;m&#xFF09;<span class="req">*</span></label>
+      <label class="inp-lbl">数量（m）<span class="req">*</span></label>
       <input type="number" class="inp" id="r-qty" min="0.1" step="0.1" placeholder="1.0">
     </div>
     <div class="inp-row">
-      <label class="inp-lbl">&#x30E1;&#x30E2;&#x30FB;&#x5099;&#x8003;</label>
-      <textarea class="inp" id="r-memo" placeholder="&#x88DC;&#x8DB3;&#x60C5;&#x5831;&#x3092;&#x3054;&#x8A18;&#x5165;&#x304F;&#x3060;&#x3055;&#x3044;"></textarea>
+      <label class="inp-lbl">メモ・備考</label>
+      <textarea class="inp" id="r-memo" placeholder="補足情報をご記入ください"></textarea>
     </div>
     <div class="req-note"><span style="color:var(--red)">*</span> required field</div>
+
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">
-      <span>&#x9001;&#x4FE1;&#x3059;&#x308B; &nbsp;/&nbsp; Submit<span class="cursor">_</span></span>
+      <span>送信する / Submit<span class="cursor">_</span></span>
     </button>
   </div>
+
   <div id="screen-sending">
     <div class="spinner"></div>
     <div class="state-ttl">Processing<span class="cursor">_</span></div>
-    <div class="state-sub">&#x9001;&#x4FE1;&#x4E2D;&#x3067;&#x3059;&#x3002;&#x3057;&#x3070;&#x3089;&#x304F;&#x304A;&#x5F85;&#x3061;&#x304F;&#x3060;&#x3055;&#x3044;</div>
+    <div class="state-sub">送信中です。しばらくお待ちください</div>
   </div>
+
   <div id="screen-done">
-    <div class="state-ic" style="border-color:var(--green);color:var(--green)">&#x2713;</div>
+    <div class="state-ic" style="border-color:var(--green);color:var(--green)">✓</div>
     <div class="state-ttl">Complete</div>
-    <div class="state-sub">&#x30EA;&#x30AF;&#x30A8;&#x30B9;&#x30C8;&#x3092;&#x53D7;&#x3051;&#x4ED8;&#x3051;&#x307E;&#x3057;&#x305F;<br><span style="color:var(--txt3)">&#x62C5;&#x5F53;&#x8005;&#x3088;&#x308A;&#x3054;&#x9023;&#x7D61;&#x3044;&#x305F;&#x3057;&#x307E;&#x3059;</span></div>
+    <div class="state-sub">リクエストを受け付けました<br>担当者よりご連絡いたします</div>
   </div>
+
   <div id="screen-error">
-    <div class="state-ic" style="border-color:var(--red);color:var(--red)">&#x2715;</div>
+    <div class="state-ic" style="border-color:var(--red);color:var(--red)">✕</div>
     <div class="state-ttl">Error</div>
-    <div class="state-sub" id="err-msg">&#x9001;&#x4FE1;&#x306B;&#x5931;&#x6557;&#x3057;&#x307E;&#x3057;&#x305F;</div>
-    <button onclick="showScreen('form')" style="margin-top:28px;padding:9px 28px;background:transparent;color:var(--txt2);border:1px solid var(--line2);font-size:10px;letter-spacing:.25em;cursor:pointer;font-family:inherit">RETRY</button>
+    <div class="state-sub" id="err-msg">送信に失敗しました</div>
+    <button onclick="showScreen('form')" style="margin-top:28px;padding:9px 28px;background:transparent;color:var(--txt2);border:1px solid var(--line);font-size:9px;letter-spacing:.25em;cursor:pointer;font-family:'Share Tech Mono',monospace;">RETRY</button>
   </div>
+
 </div>
+
 <script>
 'use strict';
 const params = new URLSearchParams(location.search);
@@ -171,7 +266,7 @@ function init(){
   document.getElementById('f-hinban').textContent=fabric.hinban;
   document.getElementById('f-hinmei').textContent=fabric.hinmei||'';
   const specs=[];
-  if(fabric.haba)specs.push(['生地工',fabric.haba]);
+  if(fabric.haba)specs.push(['生地巾',fabric.haba]);
   if(fabric.me)specs.push(['目付',fabric.me]);
   if(fabric.konritsu)specs.push(['混率',fabric.konritsu]);
   if(fabric.ito)specs.push(['使用糸',fabric.ito]);
