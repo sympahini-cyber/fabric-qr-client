@@ -92,11 +92,23 @@ textarea.inp:focus{border-color:var(--gold)}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--line)}
 
-/* ── v2: WEAVE ANIMATIONS（案C 生地・織りモチーフ） ── */
-#weave{position:fixed;inset:0;z-index:9999;pointer-events:none;}
-#weave .th{position:absolute;left:0;width:100%;transform:scaleX(0);}
-@keyframes weaveIn{to{transform:scaleX(1)}}
-#weave.out{transition:opacity .45s ease;opacity:0;}
+/* ── v4: VEIL BOOT（ベールリフト・NieR配色） ── */
+#veil{position:fixed;inset:0;z-index:9999;background:#d3ceba;display:flex;align-items:center;justify-content:center;}
+#veil::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(77,73,61,.045) 0 1px,transparent 1px 3px);pointer-events:none;}
+#veil.lift{animation:veilUp 1.1s cubic-bezier(.7,0,.25,1) forwards;}
+@keyframes veilUp{to{transform:translateY(-101%)}}
+#veil-inner{display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 20px;position:relative;}
+#veil-sq{display:flex;gap:8px;}
+#veil-sq span{width:7px;height:7px;background:#4d493d;opacity:0;}
+#veil-sq span.in{animation:sqIn .4s ease forwards;}
+@keyframes sqIn{from{opacity:0;transform:translateY(-5px)}to{opacity:.85;transform:none}}
+#veil-name{font-family:'Share Tech Mono',monospace;font-size:16px;color:#4d493d;text-transform:uppercase;letter-spacing:.7em;text-indent:.7em;opacity:0;white-space:nowrap;text-align:center;}
+#veil-name.in{animation:trackIn 1.25s cubic-bezier(.2,.6,.2,1) forwards;}
+@keyframes trackIn{from{opacity:0;letter-spacing:.7em;text-indent:.7em}to{opacity:1;letter-spacing:.32em;text-indent:.32em}}
+#veil-line{width:0;height:1px;background:#4d493d;opacity:.55;}
+#veil-line.in{animation:vline .7s ease forwards;}
+@keyframes vline{to{width:170px}}
+@media (max-width:380px){#veil-name{font-size:12px;}}
 body.loading .hdr,body.loading .wrap,body.loading #hdr-stitch{opacity:0;}
 .reveal{animation:contentIn .5s ease both;}
 @keyframes contentIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -111,14 +123,20 @@ body.loading .hdr,body.loading .wrap,body.loading #hdr-stitch{opacity:0;}
 .cart-item.weave-out{animation:itemUnweave .3s ease both;}
 @keyframes itemUnweave{from{clip-path:inset(0 0 0 0);opacity:1}to{clip-path:inset(0 0 0 100%);opacity:0}}
 @media (prefers-reduced-motion:reduce){
-  #weave{display:none}
+  #veil{display:none}
   .reveal,.cart-item.weave-new,.cart-item.weave-out,.stitch-run,.stitch-loop line{animation:none}
 }
 </style>
 </head>
 <body class="loading">
 
-<div id="weave"></div>
+<div id="veil">
+  <div id="veil-inner">
+    <div id="veil-sq"><span></span><span></span><span></span></div>
+    <div id="veil-name">Kazekami Knitting</div>
+    <div id="veil-line"></div>
+  </div>
+</div>
 
 <script>
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzx0gmi0STYTe1KGkrACy6jqou2nNVhylQmbn6MHOaM7CInEOgz-mxlKDlKFPQI2N6B/exec';
@@ -257,21 +275,24 @@ function runStitch(){
 }
 
 var _weaveAll=false;
-function runWeave(){
-  var ov=document.getElementById('weave');
-  if(!ov){ document.body.classList.remove('loading'); return; }
-  var H=window.innerHeight||600, n=8, h=Math.ceil(H/n);
-  var cols=['var(--bg2)','var(--bg3)','var(--bg1)'];
-  for(var k=0;k<n;k++){
-    var b=document.createElement('div');
-    b.className='th';
-    b.style.top=(k*h)+'px';
-    b.style.height=h+'px';
-    b.style.background=cols[k%3];
-    b.style.transformOrigin=(k%2?'right':'left')+' center';
-    b.style.animation='weaveIn .45s ease '+(k*70)+'ms forwards';
-    ov.appendChild(b);
+function runVeil(){
+  var ov=document.getElementById('veil');
+  var reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!ov || reduce){
+    if(ov) ov.remove();
+    document.body.classList.remove('loading');
+    return;
   }
+  // ブランド名がトラッキングしながら現れ、■とラインが続く
+  var nm=document.getElementById('veil-name');
+  var line=document.getElementById('veil-line');
+  var sqs=document.querySelectorAll('#veil-sq span');
+  setTimeout(function(){ if(nm) nm.classList.add('in'); },200);
+  sqs.forEach(function(s,i){
+    setTimeout(function(){ s.classList.add('in'); },650+i*140);
+  });
+  setTimeout(function(){ if(line) line.classList.add('in'); },1000);
+  // ベールが持ち上がってページが現れる
   setTimeout(function(){
     document.body.classList.remove('loading');
     var hdr=document.querySelector('.hdr');
@@ -279,14 +300,13 @@ function runWeave(){
     if(hdr) hdr.classList.add('reveal');
     if(wrap) wrap.classList.add('reveal');
     runStitch();
-    // 表示中のカードを順番に織り込む
     document.querySelectorAll('#cart-items .cart-item').forEach(function(el,i){
       el.classList.add('weave-new');
       el.style.animationDelay=(i*90)+'ms';
     });
-    ov.classList.add('out');
-    setTimeout(function(){ ov.remove(); },500);
-  }, n*70+420);
+    ov.classList.add('lift');
+    setTimeout(function(){ ov.remove(); },1150);
+  },1950);
 }
 
 function updateCartBadge(){
@@ -409,7 +429,7 @@ function init(){
 
   if(_cart.length>0) renderCart();
   else { updateCartBadge(); showScreen('nodata'); }
-  runWeave();
+  runVeil();
 }
 
 /* ── SUBMIT ── */
